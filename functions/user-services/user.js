@@ -4,7 +4,7 @@ var rdsdataservice = new AWS.RDSDataService();
 exports.main = async function(event, context) {
   try {
     var method = event.httpMethod;
-    var recordName = event.path.startsWith('/') ? event.path.substring(1) : event.path;
+    var recordName = event.path.startsWith('/') ? event.path.substring(event.path.lastIndexOf('/') + 1) : event.path;
 // Defining parameters for rdsdataservice
     var params = {
       resourceArn: process.env.TABLE,
@@ -14,7 +14,7 @@ exports.main = async function(event, context) {
    if (method === "GET") {
       if (event.path === "/") {
        //Here is where we are defining the SQL query that will be run at the DATA API
-       params['sql'] = 'select * from records';
+       params['sql'] = 'select * from member';
        const data = await rdsdataservice.executeStatement(params).promise();
        var body = {
            records: data
@@ -26,7 +26,7 @@ exports.main = async function(event, context) {
        };
      }
      else if (recordName) {
-       params['sql'] = `SELECT singers.id, singers.name, singers.nationality, records.title FROM singers INNER JOIN records on records.recordid = singers.recordid WHERE records.title LIKE '${recordName}%';`
+       params['sql'] = `SELECT name, email FROM member WHERE name LIKE '${recordName}%';`
        const data = await rdsdataservice.executeStatement(params).promise();
        var body = {
            singer: data
@@ -48,22 +48,14 @@ exports.main = async function(event, context) {
        };
      }
 
-     //Generating random IDs
-     var recordId = uuidv4();
-     var singerId = uuidv4();
-
      //Parsing the payload from body
-     var recordTitle = `${payload.recordTitle}`;
-     var recordReleaseDate = `${payload.recordReleaseDate}`;
-     var singerName = `${payload.singerName}`;
-     var singerNationality = `${payload.singerNationality}`;
-
+     var name = `${payload.name}`;
+     var email = `${payload.email}`;
+     
       //Making 2 calls to the data API to insert the new record and singer
-      params['sql'] = `INSERT INTO records(recordid,title,release_date) VALUES(${recordId},"${recordTitle}","${recordReleaseDate}");`;
+      params['sql'] = `INSERT INTO member(name, email) VALUES('${name}','${email}');`;
       const recordsWrite = await rdsdataservice.executeStatement(params).promise();
-      params['sql'] = `INSERT INTO singers(recordid,id,name,nationality) VALUES(${recordId},${singerId},"${singerName}","${singerNationality}");`;
-      const singersWrite = await rdsdataservice.executeStatement(params).promise();
-
+      
       return {
         statusCode: 200,
         headers: {},
@@ -85,10 +77,4 @@ exports.main = async function(event, context) {
       body: body
     }
   }
-}
-function uuidv4() {
-  return 'xxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v;
-  });
 }
