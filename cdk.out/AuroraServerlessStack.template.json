@@ -1,0 +1,2054 @@
+{
+ "Resources": {
+  "kakaoAuthorizer46CE5419": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "Name": "AuroraServerlessStackkakaoAuthorizer7F927E4A",
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "Type": "COGNITO_USER_POOLS",
+    "IdentitySource": "method.request.header.Authorization",
+    "ProviderARNs": [
+     {
+      "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputFnGetAttUserPool6BA7E5F2Arn686ACC00"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/kakaoAuthorizer/Resource"
+   }
+  },
+  "rdsserverlessvpc89813A70": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/21",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/Resource"
+   }
+  },
+  "rdsserverlessvpcingressSubnet1Subnet3E5BBD73": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2a",
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "ingress"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/Subnet"
+   }
+  },
+  "rdsserverlessvpcingressSubnet1RouteTable8FB14A76": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/RouteTable"
+   }
+  },
+  "rdsserverlessvpcingressSubnet1RouteTableAssociation9D4BB2EA": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcingressSubnet1RouteTable8FB14A76"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcingressSubnet1Subnet3E5BBD73"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpcingressSubnet1DefaultRouteB6C32ABE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcingressSubnet1RouteTable8FB14A76"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "rdsserverlessvpcIGW119FE08B"
+    }
+   },
+   "DependsOn": [
+    "rdsserverlessvpcVPCGW12B89533"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/DefaultRoute"
+   }
+  },
+  "rdsserverlessvpcingressSubnet1EIPBB4FB41D": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/EIP"
+   }
+  },
+  "rdsserverlessvpcingressSubnet1NATGatewayF06FE7D8": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcingressSubnet1Subnet3E5BBD73"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "rdsserverlessvpcingressSubnet1EIPBB4FB41D",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/NATGateway"
+   }
+  },
+  "rdsserverlessvpcingressSubnet2SubnetBB92A30B": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2b",
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "ingress"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/Subnet"
+   }
+  },
+  "rdsserverlessvpcingressSubnet2RouteTable77915356": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/RouteTable"
+   }
+  },
+  "rdsserverlessvpcingressSubnet2RouteTableAssociation80C535E6": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcingressSubnet2RouteTable77915356"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcingressSubnet2SubnetBB92A30B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpcingressSubnet2DefaultRoute43ACDCD4": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcingressSubnet2RouteTable77915356"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "rdsserverlessvpcIGW119FE08B"
+    }
+   },
+   "DependsOn": [
+    "rdsserverlessvpcVPCGW12B89533"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/DefaultRoute"
+   }
+  },
+  "rdsserverlessvpcingressSubnet2EIP2BD880A4": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/EIP"
+   }
+  },
+  "rdsserverlessvpcingressSubnet2NATGateway7EB3188E": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcingressSubnet2SubnetBB92A30B"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "rdsserverlessvpcingressSubnet2EIP2BD880A4",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/NATGateway"
+   }
+  },
+  "rdsserverlessvpcingressSubnet3Subnet73BA42F2": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2c",
+    "CidrBlock": "10.0.2.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "ingress"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/Subnet"
+   }
+  },
+  "rdsserverlessvpcingressSubnet3RouteTable3F4B37BB": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/RouteTable"
+   }
+  },
+  "rdsserverlessvpcingressSubnet3RouteTableAssociationD4C2A8EA": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcingressSubnet3RouteTable3F4B37BB"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcingressSubnet3Subnet73BA42F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpcingressSubnet3DefaultRouteB9B8AB51": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcingressSubnet3RouteTable3F4B37BB"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "rdsserverlessvpcIGW119FE08B"
+    }
+   },
+   "DependsOn": [
+    "rdsserverlessvpcVPCGW12B89533"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/DefaultRoute"
+   }
+  },
+  "rdsserverlessvpcingressSubnet3EIPB32F4D5F": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/EIP"
+   }
+  },
+  "rdsserverlessvpcingressSubnet3NATGatewayBA8F5E5D": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcingressSubnet3Subnet73BA42F2"
+    },
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "rdsserverlessvpcingressSubnet3EIPB32F4D5F",
+      "AllocationId"
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/NATGateway"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet1SubnetA77F0518": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2a",
+    "CidrBlock": "10.0.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "compute"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/Subnet"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet1RouteTable2B21428D": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/RouteTable"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet1RouteTableAssociationE266D80C": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpccomputeSubnet1RouteTable2B21428D"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpccomputeSubnet1SubnetA77F0518"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet1DefaultRouteE0F348A5": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpccomputeSubnet1RouteTable2B21428D"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "rdsserverlessvpcingressSubnet1NATGatewayF06FE7D8"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/DefaultRoute"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet2SubnetE57D2749": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2b",
+    "CidrBlock": "10.0.4.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "compute"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/Subnet"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet2RouteTable710F828D": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/RouteTable"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet2RouteTableAssociation9C88AD17": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpccomputeSubnet2RouteTable710F828D"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpccomputeSubnet2SubnetE57D2749"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet2DefaultRoute4F4F7762": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpccomputeSubnet2RouteTable710F828D"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "rdsserverlessvpcingressSubnet2NATGateway7EB3188E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/DefaultRoute"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet3Subnet31D2353C": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2c",
+    "CidrBlock": "10.0.5.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "compute"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/Subnet"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet3RouteTableE0767CAB": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/RouteTable"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet3RouteTableAssociationE078196C": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpccomputeSubnet3RouteTableE0767CAB"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpccomputeSubnet3Subnet31D2353C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpccomputeSubnet3DefaultRoute1E37386E": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpccomputeSubnet3RouteTableE0767CAB"
+    },
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "rdsserverlessvpcingressSubnet3NATGatewayBA8F5E5D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/DefaultRoute"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet1Subnet7637C7AE": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2a",
+    "CidrBlock": "10.0.6.0/28",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rds"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/Subnet"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet1RouteTableB1EEDB87": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/RouteTable"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet1RouteTableAssociationE232FA3D": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcrdsSubnet1RouteTableB1EEDB87"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcrdsSubnet1Subnet7637C7AE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet2SubnetCC01B7EC": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2b",
+    "CidrBlock": "10.0.6.16/28",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rds"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/Subnet"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet2RouteTableDD08E506": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/RouteTable"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet2RouteTableAssociation1B3B0FD7": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcrdsSubnet2RouteTableDD08E506"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcrdsSubnet2SubnetCC01B7EC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet3SubnetF5C309A1": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "AvailabilityZone": "ap-northeast-2c",
+    "CidrBlock": "10.0.6.32/28",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "rds"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Isolated"
+     },
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/Subnet"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet3RouteTable7AA8A3A1": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/RouteTable"
+   }
+  },
+  "rdsserverlessvpcrdsSubnet3RouteTableAssociation1F6CABB9": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "rdsserverlessvpcrdsSubnet3RouteTable7AA8A3A1"
+    },
+    "SubnetId": {
+     "Ref": "rdsserverlessvpcrdsSubnet3SubnetF5C309A1"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/RouteTableAssociation"
+   }
+  },
+  "rdsserverlessvpcIGW119FE08B": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/IGW"
+   }
+  },
+  "rdsserverlessvpcVPCGW12B89533": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    },
+    "InternetGatewayId": {
+     "Ref": "rdsserverlessvpcIGW119FE08B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/VPCGW"
+   }
+  },
+  "ServerlessClusterSubnetsB518A4BF": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnets for ServerlessCluster database",
+    "SubnetIds": [
+     {
+      "Ref": "rdsserverlessvpccomputeSubnet1SubnetA77F0518"
+     },
+     {
+      "Ref": "rdsserverlessvpccomputeSubnet2SubnetE57D2749"
+     },
+     {
+      "Ref": "rdsserverlessvpccomputeSubnet3Subnet31D2353C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Subnets/Default"
+   }
+  },
+  "ServerlessClusterSecurityGroup207F582E": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "RDS security group",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "rdsserverlessvpc89813A70"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/SecurityGroup/Resource"
+   }
+  },
+  "ServerlessClusterSecretC234E0BD": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"admin\"}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Secret/Resource"
+   }
+  },
+  "ServerlessClusterSecretAttachment14B483D3": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "ServerlessClusterSecretC234E0BD"
+    },
+    "TargetId": {
+     "Ref": "ServerlessCluster1833F7CA"
+    },
+    "TargetType": "AWS::RDS::DBCluster"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Secret/Attachment/Resource"
+   }
+  },
+  "ServerlessCluster1833F7CA": {
+   "Type": "AWS::RDS::DBCluster",
+   "Properties": {
+    "Engine": "aurora-mysql",
+    "DBClusterParameterGroupName": "default.aurora-mysql5.7",
+    "DBSubnetGroupName": {
+     "Ref": "ServerlessClusterSubnetsB518A4BF"
+    },
+    "EnableHttpEndpoint": true,
+    "EngineMode": "serverless",
+    "MasterUsername": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "ServerlessClusterSecretC234E0BD"
+       },
+       ":SecretString:username::}}"
+      ]
+     ]
+    },
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "ServerlessClusterSecretC234E0BD"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "StorageEncrypted": true,
+    "VpcSecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "ServerlessClusterSecurityGroup207F582E",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Snapshot",
+   "DeletionPolicy": "Snapshot",
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Resource"
+   }
+  },
+  "ServerlessClusterDBResourceArnServerlessClusterFF43755C": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Type": "String",
+    "Value": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":rds:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":cluster:",
+       {
+        "Ref": "ServerlessCluster1833F7CA"
+       }
+      ]
+     ]
+    },
+    "Name": "aurora-serverless-ServerlessCluster-arn"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServerlessCluster/DBResourceArn-ServerlessCluster/Resource"
+   }
+  },
+  "AuroraServerlessUserServiceLambdaRole155C8FD0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/SecretsManagerReadWrite"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonRDSDataFullAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/AuroraServerlessUserServiceLambdaRole/Resource"
+   }
+  },
+  "ServiceHandlerF07C7D00": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "21a4ca1be7e9d544023edc57c4145b733237277ab715bf07af896b8a21128275.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "AuroraServerlessUserServiceLambdaRole155C8FD0",
+      "Arn"
+     ]
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE": {
+       "Fn::Join": [
+        "",
+        [
+         "arn:",
+         {
+          "Ref": "AWS::Partition"
+         },
+         ":rds:",
+         {
+          "Ref": "AWS::Region"
+         },
+         ":",
+         {
+          "Ref": "AWS::AccountId"
+         },
+         ":cluster:",
+         {
+          "Ref": "ServerlessCluster1833F7CA"
+         }
+        ]
+       ]
+      },
+      "TABLESECRET": {
+       "Ref": "ServerlessClusterSecretAttachment14B483D3"
+      },
+      "DATABASE": "userservice"
+     }
+    },
+    "Handler": "user.handler",
+    "Runtime": "nodejs16.x"
+   },
+   "DependsOn": [
+    "AuroraServerlessUserServiceLambdaRole155C8FD0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/ServiceHandler/Resource",
+    "aws:asset:path": "asset.21a4ca1be7e9d544023edc57c4145b733237277ab715bf07af896b8a21128275",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "servicesapi290F54E8": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "This service serves.",
+    "Name": "Member Service"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Resource"
+   }
+  },
+  "servicesapiCloudWatchRole019FA933": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/CloudWatchRole/Resource"
+   }
+  },
+  "servicesapiAccountEC11317B": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "servicesapiCloudWatchRole019FA933",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "servicesapi290F54E8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Account"
+   }
+  },
+  "servicesapiDeployment61F2A5B7b07b0a8436275ca9279985355562220c": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "Description": "Automatically created by the RestApi construct"
+   },
+   "DependsOn": [
+    "servicesapiGET2F9ADC13",
+    "servicesapimembersidGET16AB53DA",
+    "servicesapimembersidOPTIONSA5794C99",
+    "servicesapimembersid22EC6350",
+    "servicesapimembersOPTIONS738136ED",
+    "servicesapimembersPOST431AE959",
+    "servicesapimembers2454B694",
+    "servicesapiOPTIONSF550B2EF"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Deployment/Resource"
+   }
+  },
+  "servicesapiDeploymentStagev1CA073328": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "DeploymentId": {
+     "Ref": "servicesapiDeployment61F2A5B7b07b0a8436275ca9279985355562220c"
+    },
+    "StageName": "v1"
+   },
+   "DependsOn": [
+    "servicesapiAccountEC11317B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/DeploymentStage.v1/Resource"
+   }
+  },
+  "servicesapiOPTIONSF550B2EF": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "OPTIONS",
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "servicesapi290F54E8",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'http://localhost:3000'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/OPTIONS/Resource"
+   }
+  },
+  "servicesapiGETApiPermissionAuroraServerlessStackservicesapiBB5DBEFCGETE709004E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ServiceHandlerF07C7D00",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "servicesapi290F54E8"
+       },
+       "/",
+       {
+        "Ref": "servicesapiDeploymentStagev1CA073328"
+       },
+       "/GET/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/GET/ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET.."
+   }
+  },
+  "servicesapiGETApiPermissionTestAuroraServerlessStackservicesapiBB5DBEFCGET71984DEA": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ServiceHandlerF07C7D00",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "servicesapi290F54E8"
+       },
+       "/test-invoke-stage/GET/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/GET/ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET.."
+   }
+  },
+  "servicesapiGET2F9ADC13": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "GET",
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "servicesapi290F54E8",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "RequestTemplates": {
+      "application/json": "{ \"statusCode\": 200 }"
+     },
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ServiceHandlerF07C7D00",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/GET/Resource"
+   }
+  },
+  "servicesapimembers2454B694": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "servicesapi290F54E8",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "members",
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/Resource"
+   }
+  },
+  "servicesapimembersOPTIONS738136ED": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "OPTIONS",
+    "ResourceId": {
+     "Ref": "servicesapimembers2454B694"
+    },
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'http://localhost:3000'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/OPTIONS/Resource"
+   }
+  },
+  "servicesapimembersPOSTApiPermissionAuroraServerlessStackservicesapiBB5DBEFCPOSTmembersA5B498A5": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ServiceHandlerF07C7D00",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "servicesapi290F54E8"
+       },
+       "/",
+       {
+        "Ref": "servicesapiDeploymentStagev1CA073328"
+       },
+       "/POST/members"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/POST/ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.POST..members"
+   }
+  },
+  "servicesapimembersPOSTApiPermissionTestAuroraServerlessStackservicesapiBB5DBEFCPOSTmembers0C997F1F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ServiceHandlerF07C7D00",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "servicesapi290F54E8"
+       },
+       "/test-invoke-stage/POST/members"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/POST/ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.POST..members"
+   }
+  },
+  "servicesapimembersPOST431AE959": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "POST",
+    "ResourceId": {
+     "Ref": "servicesapimembers2454B694"
+    },
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "kakaoAuthorizer46CE5419"
+    },
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ServiceHandlerF07C7D00",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/POST/Resource"
+   }
+  },
+  "servicesapimembersid22EC6350": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "servicesapimembers2454B694"
+    },
+    "PathPart": "{id}",
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/{id}/Resource"
+   }
+  },
+  "servicesapimembersidOPTIONSA5794C99": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "OPTIONS",
+    "ResourceId": {
+     "Ref": "servicesapimembersid22EC6350"
+    },
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+        "method.response.header.Access-Control-Allow-Origin": "'http://localhost:3000'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Allow-Credentials": true
+      },
+      "StatusCode": "204"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/{id}/OPTIONS/Resource"
+   }
+  },
+  "servicesapimembersidGETApiPermissionAuroraServerlessStackservicesapiBB5DBEFCGETmembersid09AB99DA": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ServiceHandlerF07C7D00",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "servicesapi290F54E8"
+       },
+       "/",
+       {
+        "Ref": "servicesapiDeploymentStagev1CA073328"
+       },
+       "/GET/members/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/{id}/GET/ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}"
+   }
+  },
+  "servicesapimembersidGETApiPermissionTestAuroraServerlessStackservicesapiBB5DBEFCGETmembersidA4274F84": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ServiceHandlerF07C7D00",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "servicesapi290F54E8"
+       },
+       "/test-invoke-stage/GET/members/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/{id}/GET/ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}"
+   }
+  },
+  "servicesapimembersidGET16AB53DA": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "GET",
+    "ResourceId": {
+     "Ref": "servicesapimembersid22EC6350"
+    },
+    "RestApiId": {
+     "Ref": "servicesapi290F54E8"
+    },
+    "AuthorizationType": "COGNITO_USER_POOLS",
+    "AuthorizerId": {
+     "Ref": "kakaoAuthorizer46CE5419"
+    },
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ServiceHandlerF07C7D00",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/services-api/Default/members/{id}/GET/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/11SwW7bMAz9lt4VbcmwYVcn2Yoethlp12tBy5yrxpYMkUqRGf73UVYSGzvx8ZF6pEhu9Oar/ngH77Qy9XHV2koPjwzmqIR6GaC3DTC+w1kPO984y/43YSi9b6mI/OqD/YtB7f64hXdA4qK3iV3AwhgfHas99q0/dyhQ2IUnZRtMXAby1MdgcAuE6geKep2CF3SNXopMeFRoNnp47k1in8udKmPVWvMYK4dTtRkdfGR8gqrFmZ+5gsgbC2y9uyUn8O2hTOYn8H2eiiqDPQmchR8cYxB8TcidXLyCZbSv+bdoYrB8vg8+9lMPS2JUoSbZBIYThhaJdm0kEVa50O3Rfrsk9sBQybhEKuRu9tvLw1HRRFIHTqYbZJ1TyZSXzROEBnnR4S3h/4hoUZfOJFjXlBCgQ85HcHNGZUFSDj7PN9lRtdBVNejhe3TmOtolLjF0lkg8qfDpBYikX10kI77eRnNETucwzuufoulgpJWk8StyH3l5FQnvvKstT8LO16jf6MNp/UWvP+v13RtZuwpymbZDfcj2H2xjrWAWAwAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "AuroraServerlessStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "servicesapiEndpointBF96C043": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "servicesapi290F54E8"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "servicesapiDeploymentStagev1CA073328"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "apiUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "servicesapi290F54E8"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "servicesapiDeploymentStagev1CA073328"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

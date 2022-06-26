@@ -1,0 +1,33 @@
+import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
+import * as apigwv2 from '@aws-cdk/aws-apigatewayv2-alpha'
+import { HttpApi } from './constructs/httpapi'
+import { App } from '../../config/config'
+
+interface Props extends StackProps {
+  userPoolId: string
+  userPoolClientId: string
+}
+
+export class ApiGatewayStack extends Stack {
+  public readonly api: apigwv2.IHttpApi
+  public readonly authorizer: apigwv2.IHttpRouteAuthorizer
+
+  constructor(scope: Construct, id: string, props: Props) {
+    super(scope, id, props)
+
+    const httpApi = new HttpApi(this, `HttpApi`, {
+      userPoolId: props.userPoolId,
+      userPoolClientId: props.userPoolClientId,
+    })
+    this.api = httpApi.api
+    this.authorizer = httpApi.authorizer
+
+    new CfnOutput(this, `HttpApiUrl`, {
+      exportName: `${App.Context.ns}HttpApiUrl`,
+      value: `${httpApi.api.url}` || 'undefined',
+    })
+  }
+
+}

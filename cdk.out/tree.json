@@ -1,0 +1,4083 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.1.42"
+        }
+      },
+      "CognitoKakaoStack": {
+        "id": "CognitoKakaoStack",
+        "path": "CognitoKakaoStack",
+        "children": {
+          "PreSignupFunction": {
+            "id": "PreSignupFunction",
+            "path": "CognitoKakaoStack/PreSignupFunction",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CognitoKakaoStack/PreSignupFunction/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CognitoKakaoStack/PreSignupFunction/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.28.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CognitoKakaoStack/PreSignupFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CognitoKakaoStack/PreSignupFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CognitoKakaoStack/PreSignupFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.28.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CognitoKakaoStack/PreSignupFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "aed3257e292417c4a8e903c64a041ae0811e0f597d917763c036d7af29d1d341.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "PreSignupFunctionServiceRole5334302F",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                      }
+                    },
+                    "functionName": "KakaoAuthPreSignupTrigger",
+                    "handler": "index.handler",
+                    "memorySize": 128,
+                    "runtime": "nodejs16.x",
+                    "timeout": 5
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.28.0"
+                }
+              },
+              "PreSignUpCognito": {
+                "id": "PreSignUpCognito",
+                "path": "CognitoKakaoStack/PreSignupFunction/PreSignUpCognito",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "PreSignupFunction4F2ED1FA",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "cognito-idp.amazonaws.com",
+                    "sourceArn": {
+                      "Fn::GetAtt": [
+                        "UserPool6BA7E5F2",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+              "version": "2.28.0"
+            }
+          },
+          "PostConfirmationFunction": {
+            "id": "PostConfirmationFunction",
+            "path": "CognitoKakaoStack/PostConfirmationFunction",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CognitoKakaoStack/PostConfirmationFunction/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CognitoKakaoStack/PostConfirmationFunction/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.28.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CognitoKakaoStack/PostConfirmationFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CognitoKakaoStack/PostConfirmationFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CognitoKakaoStack/PostConfirmationFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.28.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CognitoKakaoStack/PostConfirmationFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "77ab50769b094a010267337b702563148d1311bbf5302528cb6f829170a70756.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "PostConfirmationFunctionServiceRoleE856FC83",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                      }
+                    },
+                    "functionName": "KakaoAuthPostConfirmTrigger",
+                    "handler": "index.handler",
+                    "memorySize": 128,
+                    "runtime": "nodejs16.x",
+                    "timeout": 5
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.28.0"
+                }
+              },
+              "PostConfirmationCognito": {
+                "id": "PostConfirmationCognito",
+                "path": "CognitoKakaoStack/PostConfirmationFunction/PostConfirmationCognito",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "PostConfirmationFunction3DFFAE63",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "cognito-idp.amazonaws.com",
+                    "sourceArn": {
+                      "Fn::GetAtt": [
+                        "UserPool6BA7E5F2",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+              "version": "2.28.0"
+            }
+          },
+          "PreAuthenticationFunction": {
+            "id": "PreAuthenticationFunction",
+            "path": "CognitoKakaoStack/PreAuthenticationFunction",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "CognitoKakaoStack/PreAuthenticationFunction/ServiceRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CognitoKakaoStack/PreAuthenticationFunction/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.28.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "CognitoKakaoStack/PreAuthenticationFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "CognitoKakaoStack/PreAuthenticationFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "CognitoKakaoStack/PreAuthenticationFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.28.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "CognitoKakaoStack/PreAuthenticationFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "836f68d3e7b3fbf55bb68597719a0aff60ec65feb3f90481fce3f08b7b5a352d.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "PreAuthenticationFunctionServiceRole7AB42D7C",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                      }
+                    },
+                    "functionName": "KakaoAuthPreAuthenticationTrigger",
+                    "handler": "index.handler",
+                    "memorySize": 128,
+                    "runtime": "nodejs16.x",
+                    "timeout": 5
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.28.0"
+                }
+              },
+              "PreAuthenticationCognito": {
+                "id": "PreAuthenticationCognito",
+                "path": "CognitoKakaoStack/PreAuthenticationFunction/PreAuthenticationCognito",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "PreAuthenticationFunctionFCD4794F",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "cognito-idp.amazonaws.com",
+                    "sourceArn": {
+                      "Fn::GetAtt": [
+                        "UserPool6BA7E5F2",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+              "version": "2.28.0"
+            }
+          },
+          "UserPool": {
+            "id": "UserPool",
+            "path": "CognitoKakaoStack/UserPool",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CognitoKakaoStack/UserPool/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPool",
+                  "aws:cdk:cloudformation:props": {
+                    "accountRecoverySetting": {
+                      "recoveryMechanisms": [
+                        {
+                          "name": "verified_email",
+                          "priority": 1
+                        }
+                      ]
+                    },
+                    "adminCreateUserConfig": {
+                      "allowAdminCreateUserOnly": false
+                    },
+                    "autoVerifiedAttributes": [
+                      "email"
+                    ],
+                    "emailVerificationMessage": "The verification code to your new account is {####}",
+                    "emailVerificationSubject": "Verify your new account",
+                    "lambdaConfig": {
+                      "preSignUp": {
+                        "Fn::GetAtt": [
+                          "PreSignupFunction4F2ED1FA",
+                          "Arn"
+                        ]
+                      },
+                      "postConfirmation": {
+                        "Fn::GetAtt": [
+                          "PostConfirmationFunction3DFFAE63",
+                          "Arn"
+                        ]
+                      },
+                      "preAuthentication": {
+                        "Fn::GetAtt": [
+                          "PreAuthenticationFunctionFCD4794F",
+                          "Arn"
+                        ]
+                      }
+                    },
+                    "policies": {
+                      "passwordPolicy": {
+                        "minimumLength": 8,
+                        "requireLowercase": true,
+                        "requireUppercase": false,
+                        "requireNumbers": true,
+                        "requireSymbols": false
+                      }
+                    },
+                    "schema": [
+                      {
+                        "name": "email",
+                        "mutable": true,
+                        "required": true
+                      },
+                      {
+                        "name": "provider",
+                        "attributeDataType": "String",
+                        "mutable": true
+                      }
+                    ],
+                    "smsVerificationMessage": "The verification code to your new account is {####}",
+                    "usernameAttributes": [
+                      "email"
+                    ],
+                    "userPoolName": "KakaoAuthUserPool",
+                    "verificationMessageTemplate": {
+                      "defaultEmailOption": "CONFIRM_WITH_CODE",
+                      "emailMessage": "The verification code to your new account is {####}",
+                      "emailSubject": "Verify your new account",
+                      "smsMessage": "The verification code to your new account is {####}"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPool",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPool",
+              "version": "2.28.0"
+            }
+          },
+          "UserPoolDomain": {
+            "id": "UserPoolDomain",
+            "path": "CognitoKakaoStack/UserPoolDomain",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CognitoKakaoStack/UserPoolDomain/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolDomain",
+                  "aws:cdk:cloudformation:props": {
+                    "domain": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "kakaoauth",
+                          {
+                            "Ref": "AWS::AccountId"
+                          }
+                        ]
+                      ]
+                    },
+                    "userPoolId": {
+                      "Ref": "UserPool6BA7E5F2"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolDomain",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPoolDomain",
+              "version": "2.28.0"
+            }
+          },
+          "UserPoolClient": {
+            "id": "UserPoolClient",
+            "path": "CognitoKakaoStack/UserPoolClient",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "CognitoKakaoStack/UserPoolClient/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolClient",
+                  "aws:cdk:cloudformation:props": {
+                    "userPoolId": {
+                      "Ref": "UserPool6BA7E5F2"
+                    },
+                    "allowedOAuthFlows": [
+                      "implicit"
+                    ],
+                    "allowedOAuthFlowsUserPoolClient": true,
+                    "allowedOAuthScopes": [
+                      "email",
+                      "profile",
+                      "openid"
+                    ],
+                    "callbackUrLs": [
+                      "http://localhost:3000"
+                    ],
+                    "clientName": "KakaoAuthUserPoolClient",
+                    "explicitAuthFlows": [
+                      "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+                      "ALLOW_USER_SRP_AUTH",
+                      "ALLOW_REFRESH_TOKEN_AUTH"
+                    ],
+                    "preventUserExistenceErrors": "ENABLED",
+                    "supportedIdentityProviders": [
+                      "COGNITO"
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolClient",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPoolClient",
+              "version": "2.28.0"
+            }
+          },
+          "KakaoAuthApiGatewayStack": {
+            "id": "KakaoAuthApiGatewayStack",
+            "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack",
+            "children": {
+              "HttpApi": {
+                "id": "HttpApi",
+                "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi",
+                "children": {
+                  "HttpApi": {
+                    "id": "HttpApi",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/HttpApi",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/HttpApi/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Api",
+                          "aws:cdk:cloudformation:props": {
+                            "corsConfiguration": {
+                              "allowHeaders": [
+                                "*"
+                              ],
+                              "allowMethods": [
+                                "*"
+                              ],
+                              "allowOrigins": [
+                                "*"
+                              ],
+                              "maxAge": 864000
+                            },
+                            "name": "KakaoAuthHttpApi",
+                            "protocolType": "HTTP"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnApi",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultStage": {
+                        "id": "DefaultStage",
+                        "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/HttpApi/DefaultStage",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/HttpApi/DefaultStage/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Stage",
+                              "aws:cdk:cloudformation:props": {
+                                "apiId": {
+                                  "Ref": "HttpApi1AA332FB"
+                                },
+                                "stageName": "$default",
+                                "autoDeploy": true
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnStage",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpStage",
+                          "version": "2.28.0-alpha.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpApi",
+                      "version": "2.28.0-alpha.0"
+                    }
+                  },
+                  "JWTAuthorizer": {
+                    "id": "JWTAuthorizer",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/JWTAuthorizer",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/JWTAuthorizer/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Authorizer",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": {
+                              "Ref": "HttpApi1AA332FB"
+                            },
+                            "authorizerType": "JWT",
+                            "name": "KakaoAuthJWTAuthorizer",
+                            "identitySource": [
+                              "$request.header.Authorization"
+                            ],
+                            "jwtConfiguration": {
+                              "audience": [
+                                {
+                                  "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPoolClient2F5918F753847A55"
+                                }
+                              ],
+                              "issuer": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "https://cognito-idp.",
+                                    {
+                                      "Ref": "AWS::Region"
+                                    },
+                                    ".amazonaws.com/",
+                                    {
+                                      "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPool6BA7E5F296FD7236"
+                                    }
+                                  ]
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnAuthorizer",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpAuthorizer",
+                      "version": "2.28.0-alpha.0"
+                    }
+                  },
+                  "JWTRouteAuthorizer": {
+                    "id": "JWTRouteAuthorizer",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/JWTRouteAuthorizer",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.42"
+                }
+              },
+              "HttpApiUrl": {
+                "id": "HttpApiUrl",
+                "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApiUrl",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.28.0"
+                }
+              },
+              "CDKMetadata": {
+                "id": "CDKMetadata",
+                "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/CDKMetadata",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/CDKMetadata/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Condition": {
+                    "id": "Condition",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/CDKMetadata/Condition",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnCondition",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.42"
+                }
+              },
+              "Exports": {
+                "id": "Exports",
+                "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/Exports",
+                "children": {
+                  "Output{\"Ref\":\"HttpApi1AA332FB\"}": {
+                    "id": "Output{\"Ref\":\"HttpApi1AA332FB\"}",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/Exports/Output{\"Ref\":\"HttpApi1AA332FB\"}",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnOutput",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Output{\"Ref\":\"HttpApiJWTAuthorizer22DB345D\"}": {
+                    "id": "Output{\"Ref\":\"HttpApiJWTAuthorizer22DB345D\"}",
+                    "path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/Exports/Output{\"Ref\":\"HttpApiJWTAuthorizer22DB345D\"}",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnOutput",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.42"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Stack",
+              "version": "2.28.0"
+            }
+          },
+          "KakaoAuthAuthKakaoStack": {
+            "id": "KakaoAuthAuthKakaoStack",
+            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack",
+            "children": {
+              "KakaoAuth": {
+                "id": "KakaoAuth",
+                "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth",
+                "children": {
+                  "KakaoAuthFunction": {
+                    "id": "KakaoAuthFunction",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction",
+                    "children": {
+                      "ServiceRole": {
+                        "id": "ServiceRole",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/ServiceRole",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/ServiceRole/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                              "aws:cdk:cloudformation:props": {
+                                "assumeRolePolicyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": "sts:AssumeRole",
+                                      "Effect": "Allow",
+                                      "Principal": {
+                                        "Service": "lambda.amazonaws.com"
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "managedPolicyArns": [
+                                  {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "DefaultPolicy": {
+                            "id": "DefaultPolicy",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/ServiceRole/DefaultPolicy",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/ServiceRole/DefaultPolicy/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                                  "aws:cdk:cloudformation:props": {
+                                    "policyDocument": {
+                                      "Statement": [
+                                        {
+                                          "Action": "cognito-idp:*",
+                                          "Effect": "Allow",
+                                          "Resource": "*"
+                                        }
+                                      ],
+                                      "Version": "2012-10-17"
+                                    },
+                                    "policyName": "KakaoAuthKakaoAuthFunctionServiceRoleDefaultPolicyF3E76B1B",
+                                    "roles": [
+                                      {
+                                        "Ref": "KakaoAuthKakaoAuthFunctionServiceRoleE49C44D4"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                                  "version": "2.28.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.Policy",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Role",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Code": {
+                        "id": "Code",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoAuthFunction/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                          "aws:cdk:cloudformation:props": {
+                            "code": {
+                              "s3Bucket": {
+                                "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                              },
+                              "s3Key": "7b8cb300624e7330aac4f48eb7cdcdd09cf53edd46fe0cd99becac94d20a9cd5.zip"
+                            },
+                            "role": {
+                              "Fn::GetAtt": [
+                                "KakaoAuthKakaoAuthFunctionServiceRoleE49C44D4",
+                                "Arn"
+                              ]
+                            },
+                            "environment": {
+                              "variables": {
+                                "USER_POOL_ID": {
+                                  "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPool6BA7E5F296FD7236"
+                                },
+                                "CLIENT_ID": {
+                                  "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPoolClient2F5918F753847A55"
+                                },
+                                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                              }
+                            },
+                            "functionName": "KakaoAuthKakaoAuth",
+                            "handler": "index.handler",
+                            "memorySize": 128,
+                            "runtime": "nodejs16.x",
+                            "timeout": 5
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "PingFunction": {
+                    "id": "PingFunction",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction",
+                    "children": {
+                      "ServiceRole": {
+                        "id": "ServiceRole",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction/ServiceRole",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction/ServiceRole/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                              "aws:cdk:cloudformation:props": {
+                                "assumeRolePolicyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": "sts:AssumeRole",
+                                      "Effect": "Allow",
+                                      "Principal": {
+                                        "Service": "lambda.amazonaws.com"
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "managedPolicyArns": [
+                                  {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Role",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Code": {
+                        "id": "Code",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction/Code",
+                        "children": {
+                          "Stage": {
+                            "id": "Stage",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction/Code/Stage",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.AssetStaging",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "AssetBucket": {
+                            "id": "AssetBucket",
+                            "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction/Code/AssetBucket",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/PingFunction/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                          "aws:cdk:cloudformation:props": {
+                            "code": {
+                              "s3Bucket": {
+                                "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                              },
+                              "s3Key": "8d1c74d38b7c3e7dfba261264212254a05f0156fb5fdc98fc2792392a977a81a.zip"
+                            },
+                            "role": {
+                              "Fn::GetAtt": [
+                                "KakaoAuthPingFunctionServiceRole1C18D721",
+                                "Arn"
+                              ]
+                            },
+                            "environment": {
+                              "variables": {
+                                "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1"
+                              }
+                            },
+                            "functionName": "KakaoAuthPing",
+                            "handler": "index.handler",
+                            "memorySize": 128,
+                            "runtime": "nodejs16.x",
+                            "timeout": 1
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda_nodejs.NodejsFunction",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "KakaoGroup": {
+                    "id": "KakaoGroup",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/KakaoAuth/KakaoGroup",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "userPoolId": {
+                          "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPool6BA7E5F296FD7236"
+                        },
+                        "description": "Group for users who sign in using Kakao",
+                        "groupName": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              {
+                                "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPool6BA7E5F296FD7236"
+                              },
+                              "_Kakao"
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolGroup",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.42"
+                }
+              },
+              "AuthKakaoRoute": {
+                "id": "AuthKakaoRoute",
+                "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/AuthKakaoRoute",
+                "children": {
+                  "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction": {
+                    "id": "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/AuthKakaoRoute/CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/AuthKakaoRoute/CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Integration",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": {
+                              "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+                            },
+                            "integrationType": "AWS_PROXY",
+                            "integrationUri": {
+                              "Fn::GetAtt": [
+                                "KakaoAuthKakaoAuthFunctionB723FA3A",
+                                "Arn"
+                              ]
+                            },
+                            "payloadFormatVersion": "2.0"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnIntegration",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpIntegration",
+                      "version": "2.28.0-alpha.0"
+                    }
+                  },
+                  "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction-Permission": {
+                    "id": "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction-Permission",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/AuthKakaoRoute/CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--KakaoAuthFunction-Permission",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                      "aws:cdk:cloudformation:props": {
+                        "action": "lambda:InvokeFunction",
+                        "functionName": {
+                          "Fn::GetAtt": [
+                            "KakaoAuthKakaoAuthFunctionB723FA3A",
+                            "Arn"
+                          ]
+                        },
+                        "principal": "apigateway.amazonaws.com",
+                        "sourceArn": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              ":execute-api:",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              ":",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              ":",
+                              {
+                                "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+                              },
+                              "/*/*/auth/kakao"
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/AuthKakaoRoute/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "apiId": {
+                          "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+                        },
+                        "routeKey": "POST /auth/kakao",
+                        "authorizationType": "NONE",
+                        "target": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "integrations/",
+                              {
+                                "Ref": "AuthKakaoRouteCognitoKakaoStackKakaoAuthAuthKakaoStackKakaoAuthKakaoAuthFunction6BD949AB"
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnRoute",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpRoute",
+                  "version": "2.28.0-alpha.0"
+                }
+              },
+              "PingRoute": {
+                "id": "PingRoute",
+                "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/PingRoute",
+                "children": {
+                  "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction": {
+                    "id": "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/PingRoute/CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/PingRoute/CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Integration",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": {
+                              "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+                            },
+                            "integrationType": "AWS_PROXY",
+                            "integrationUri": {
+                              "Fn::GetAtt": [
+                                "KakaoAuthPingFunction3E35B87A",
+                                "Arn"
+                              ]
+                            },
+                            "payloadFormatVersion": "2.0"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnIntegration",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpIntegration",
+                      "version": "2.28.0-alpha.0"
+                    }
+                  },
+                  "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction-Permission": {
+                    "id": "CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction-Permission",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/PingRoute/CognitoKakaoStack--KakaoAuthAuthKakaoStack--KakaoAuth--PingFunction-Permission",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                      "aws:cdk:cloudformation:props": {
+                        "action": "lambda:InvokeFunction",
+                        "functionName": {
+                          "Fn::GetAtt": [
+                            "KakaoAuthPingFunction3E35B87A",
+                            "Arn"
+                          ]
+                        },
+                        "principal": "apigateway.amazonaws.com",
+                        "sourceArn": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              ":execute-api:",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              ":",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              ":",
+                              {
+                                "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+                              },
+                              "/*/*/ping"
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/PingRoute/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "apiId": {
+                          "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+                        },
+                        "routeKey": "GET /ping",
+                        "authorizationType": "JWT",
+                        "authorizerId": {
+                          "Fn::ImportValue": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApiJWTAuthorizer22DB345D61AD66AB"
+                        },
+                        "target": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "integrations/",
+                              {
+                                "Ref": "PingRouteCognitoKakaoStackKakaoAuthAuthKakaoStackKakaoAuthPingFunctionB4DA1D27"
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnRoute",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "@aws-cdk/aws-apigatewayv2-alpha.HttpRoute",
+                  "version": "2.28.0-alpha.0"
+                }
+              },
+              "CDKMetadata": {
+                "id": "CDKMetadata",
+                "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/CDKMetadata",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/CDKMetadata/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Condition": {
+                    "id": "Condition",
+                    "path": "CognitoKakaoStack/KakaoAuthAuthKakaoStack/CDKMetadata/Condition",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnCondition",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.42"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Stack",
+              "version": "2.28.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "CognitoKakaoStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "CognitoKakaoStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.28.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "CognitoKakaoStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.42"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "CognitoKakaoStack/Exports",
+            "children": {
+              "Output{\"Ref\":\"UserPoolClient2F5918F7\"}": {
+                "id": "Output{\"Ref\":\"UserPoolClient2F5918F7\"}",
+                "path": "CognitoKakaoStack/Exports/Output{\"Ref\":\"UserPoolClient2F5918F7\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.28.0"
+                }
+              },
+              "Output{\"Ref\":\"UserPool6BA7E5F2\"}": {
+                "id": "Output{\"Ref\":\"UserPool6BA7E5F2\"}",
+                "path": "CognitoKakaoStack/Exports/Output{\"Ref\":\"UserPool6BA7E5F2\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.28.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"UserPool6BA7E5F2\",\"Arn\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"UserPool6BA7E5F2\",\"Arn\"]}",
+                "path": "CognitoKakaoStack/Exports/Output{\"Fn::GetAtt\":[\"UserPool6BA7E5F2\",\"Arn\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.42"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.28.0"
+        }
+      },
+      "AuroraServerlessStack": {
+        "id": "AuroraServerlessStack",
+        "path": "AuroraServerlessStack",
+        "children": {
+          "kakaoAuthorizer": {
+            "id": "kakaoAuthorizer",
+            "path": "AuroraServerlessStack/kakaoAuthorizer",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuroraServerlessStack/kakaoAuthorizer/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Authorizer",
+                  "aws:cdk:cloudformation:props": {
+                    "name": "AuroraServerlessStackkakaoAuthorizer7F927E4A",
+                    "restApiId": {
+                      "Ref": "servicesapi290F54E8"
+                    },
+                    "type": "COGNITO_USER_POOLS",
+                    "identitySource": "method.request.header.Authorization",
+                    "providerArns": [
+                      {
+                        "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputFnGetAttUserPool6BA7E5F2Arn686ACC00"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAuthorizer",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.CognitoUserPoolsAuthorizer",
+              "version": "2.28.0"
+            }
+          },
+          "rdsserverlessvpc": {
+            "id": "rdsserverlessvpc",
+            "path": "AuroraServerlessStack/rdsserverlessvpc",
+            "children": {
+              "rdsserverlessvpc": {
+                "id": "rdsserverlessvpc",
+                "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.0.0.0/21",
+                        "enableDnsHostnames": true,
+                        "enableDnsSupport": true,
+                        "instanceTenancy": "default",
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnVPC",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "ingressSubnet1": {
+                    "id": "ingressSubnet1",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2a",
+                            "cidrBlock": "10.0.0.0/24",
+                            "mapPublicIpOnLaunch": true,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "ingress"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcingressSubnet1RouteTable8FB14A76"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcingressSubnet1Subnet3E5BBD73"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcingressSubnet1RouteTable8FB14A76"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "rdsserverlessvpcIGW119FE08B"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "EIP": {
+                        "id": "EIP",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/EIP",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                          "aws:cdk:cloudformation:props": {
+                            "domain": "vpc",
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "NATGateway": {
+                        "id": "NATGateway",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1/NATGateway",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                          "aws:cdk:cloudformation:props": {
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcingressSubnet1Subnet3E5BBD73"
+                            },
+                            "allocationId": {
+                              "Fn::GetAtt": [
+                                "rdsserverlessvpcingressSubnet1EIPBB4FB41D",
+                                "AllocationId"
+                              ]
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "ingressSubnet2": {
+                    "id": "ingressSubnet2",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2b",
+                            "cidrBlock": "10.0.1.0/24",
+                            "mapPublicIpOnLaunch": true,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "ingress"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcingressSubnet2RouteTable77915356"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcingressSubnet2SubnetBB92A30B"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcingressSubnet2RouteTable77915356"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "rdsserverlessvpcIGW119FE08B"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "EIP": {
+                        "id": "EIP",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/EIP",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                          "aws:cdk:cloudformation:props": {
+                            "domain": "vpc",
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "NATGateway": {
+                        "id": "NATGateway",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2/NATGateway",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                          "aws:cdk:cloudformation:props": {
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcingressSubnet2SubnetBB92A30B"
+                            },
+                            "allocationId": {
+                              "Fn::GetAtt": [
+                                "rdsserverlessvpcingressSubnet2EIP2BD880A4",
+                                "AllocationId"
+                              ]
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "ingressSubnet3": {
+                    "id": "ingressSubnet3",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2c",
+                            "cidrBlock": "10.0.2.0/24",
+                            "mapPublicIpOnLaunch": true,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "ingress"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcingressSubnet3RouteTable3F4B37BB"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcingressSubnet3Subnet73BA42F2"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcingressSubnet3RouteTable3F4B37BB"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "rdsserverlessvpcIGW119FE08B"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "EIP": {
+                        "id": "EIP",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/EIP",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                          "aws:cdk:cloudformation:props": {
+                            "domain": "vpc",
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "NATGateway": {
+                        "id": "NATGateway",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3/NATGateway",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                          "aws:cdk:cloudformation:props": {
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcingressSubnet3Subnet73BA42F2"
+                            },
+                            "allocationId": {
+                              "Fn::GetAtt": [
+                                "rdsserverlessvpcingressSubnet3EIPB32F4D5F",
+                                "AllocationId"
+                              ]
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/ingressSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "computeSubnet1": {
+                    "id": "computeSubnet1",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2a",
+                            "cidrBlock": "10.0.3.0/24",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "compute"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet1RouteTable2B21428D"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet1SubnetA77F0518"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet1/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet1RouteTable2B21428D"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "rdsserverlessvpcingressSubnet1NATGatewayF06FE7D8"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "computeSubnet2": {
+                    "id": "computeSubnet2",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2b",
+                            "cidrBlock": "10.0.4.0/24",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "compute"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet2RouteTable710F828D"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet2SubnetE57D2749"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet2/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet2RouteTable710F828D"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "rdsserverlessvpcingressSubnet2NATGateway7EB3188E"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "computeSubnet3": {
+                    "id": "computeSubnet3",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2c",
+                            "cidrBlock": "10.0.5.0/24",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "compute"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet3RouteTableE0767CAB"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet3Subnet31D2353C"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/computeSubnet3/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpccomputeSubnet3RouteTableE0767CAB"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "rdsserverlessvpcingressSubnet3NATGatewayBA8F5E5D"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "rdsSubnet1": {
+                    "id": "rdsSubnet1",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2a",
+                            "cidrBlock": "10.0.6.0/28",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "rds"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Isolated"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet1/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcrdsSubnet1RouteTableB1EEDB87"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcrdsSubnet1Subnet7637C7AE"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "rdsSubnet2": {
+                    "id": "rdsSubnet2",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2b",
+                            "cidrBlock": "10.0.6.16/28",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "rds"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Isolated"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet2/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcrdsSubnet2RouteTableDD08E506"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcrdsSubnet2SubnetCC01B7EC"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "rdsSubnet3": {
+                    "id": "rdsSubnet3",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "availabilityZone": "ap-northeast-2c",
+                            "cidrBlock": "10.0.6.32/28",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "rds"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Isolated"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/rdsSubnet3/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "rdsserverlessvpcrdsSubnet3RouteTable7AA8A3A1"
+                            },
+                            "subnetId": {
+                              "Ref": "rdsserverlessvpcrdsSubnet3SubnetF5C309A1"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "IGW": {
+                    "id": "IGW",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/IGW",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnInternetGateway",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "VPCGW": {
+                    "id": "VPCGW",
+                    "path": "AuroraServerlessStack/rdsserverlessvpc/rdsserverlessvpc/VPCGW",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
+                      "aws:cdk:cloudformation:props": {
+                        "vpcId": {
+                          "Ref": "rdsserverlessvpc89813A70"
+                        },
+                        "internetGatewayId": {
+                          "Ref": "rdsserverlessvpcIGW119FE08B"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnVPCGatewayAttachment",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.Vpc",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.42"
+            }
+          },
+          "ServerlessCluster": {
+            "id": "ServerlessCluster",
+            "path": "AuroraServerlessStack/ServerlessCluster",
+            "children": {
+              "ServerlessCluster": {
+                "id": "ServerlessCluster",
+                "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster",
+                "children": {
+                  "Subnets": {
+                    "id": "Subnets",
+                    "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Subnets",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Subnets/Default",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::RDS::DBSubnetGroup",
+                          "aws:cdk:cloudformation:props": {
+                            "dbSubnetGroupDescription": "Subnets for ServerlessCluster database",
+                            "subnetIds": [
+                              {
+                                "Ref": "rdsserverlessvpccomputeSubnet1SubnetA77F0518"
+                              },
+                              {
+                                "Ref": "rdsserverlessvpccomputeSubnet2SubnetE57D2749"
+                              },
+                              {
+                                "Ref": "rdsserverlessvpccomputeSubnet3Subnet31D2353C"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_rds.CfnDBSubnetGroup",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_rds.SubnetGroup",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "SecurityGroup": {
+                    "id": "SecurityGroup",
+                    "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/SecurityGroup",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/SecurityGroup/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:props": {
+                            "groupDescription": "RDS security group",
+                            "securityGroupEgress": [
+                              {
+                                "cidrIp": "0.0.0.0/0",
+                                "description": "Allow all outbound traffic by default",
+                                "ipProtocol": "-1"
+                              }
+                            ],
+                            "vpcId": {
+                              "Ref": "rdsserverlessvpc89813A70"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "AuroraMySqlDatabaseClusterEngineDefaultParameterGroup": {
+                    "id": "AuroraMySqlDatabaseClusterEngineDefaultParameterGroup",
+                    "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/AuroraMySqlDatabaseClusterEngineDefaultParameterGroup",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Secret": {
+                    "id": "Secret",
+                    "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Secret",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Secret/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
+                          "aws:cdk:cloudformation:props": {
+                            "description": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "Generated by the CDK for stack: ",
+                                  {
+                                    "Ref": "AWS::StackName"
+                                  }
+                                ]
+                              ]
+                            },
+                            "generateSecretString": {
+                              "passwordLength": 30,
+                              "secretStringTemplate": "{\"username\":\"admin\"}",
+                              "generateStringKey": "password",
+                              "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecret",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Attachment": {
+                        "id": "Attachment",
+                        "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Secret/Attachment",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Secret/Attachment/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::SecretsManager::SecretTargetAttachment",
+                              "aws:cdk:cloudformation:props": {
+                                "secretId": {
+                                  "Ref": "ServerlessClusterSecretC234E0BD"
+                                },
+                                "targetId": {
+                                  "Ref": "ServerlessCluster1833F7CA"
+                                },
+                                "targetType": "AWS::RDS::DBCluster"
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecretTargetAttachment",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_secretsmanager.SecretTargetAttachment",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_rds.DatabaseSecret",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuroraServerlessStack/ServerlessCluster/ServerlessCluster/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::RDS::DBCluster",
+                      "aws:cdk:cloudformation:props": {
+                        "engine": "aurora-mysql",
+                        "dbClusterParameterGroupName": "default.aurora-mysql5.7",
+                        "dbSubnetGroupName": {
+                          "Ref": "ServerlessClusterSubnetsB518A4BF"
+                        },
+                        "enableHttpEndpoint": true,
+                        "engineMode": "serverless",
+                        "masterUsername": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "{{resolve:secretsmanager:",
+                              {
+                                "Ref": "ServerlessClusterSecretC234E0BD"
+                              },
+                              ":SecretString:username::}}"
+                            ]
+                          ]
+                        },
+                        "masterUserPassword": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "{{resolve:secretsmanager:",
+                              {
+                                "Ref": "ServerlessClusterSecretC234E0BD"
+                              },
+                              ":SecretString:password::}}"
+                            ]
+                          ]
+                        },
+                        "storageEncrypted": true,
+                        "vpcSecurityGroupIds": [
+                          {
+                            "Fn::GetAtt": [
+                              "ServerlessClusterSecurityGroup207F582E",
+                              "GroupId"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_rds.CfnDBCluster",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_rds.ServerlessCluster",
+                  "version": "2.28.0"
+                }
+              },
+              "DBResourceArn-ServerlessCluster": {
+                "id": "DBResourceArn-ServerlessCluster",
+                "path": "AuroraServerlessStack/ServerlessCluster/DBResourceArn-ServerlessCluster",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuroraServerlessStack/ServerlessCluster/DBResourceArn-ServerlessCluster/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SSM::Parameter",
+                      "aws:cdk:cloudformation:props": {
+                        "type": "String",
+                        "value": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              ":rds:",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              ":",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              ":cluster:",
+                              {
+                                "Ref": "ServerlessCluster1833F7CA"
+                              }
+                            ]
+                          ]
+                        },
+                        "name": "aurora-serverless-ServerlessCluster-arn"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ssm.CfnParameter",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ssm.StringParameter",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.42"
+            }
+          },
+          "AuroraServerlessUserServiceLambdaRole": {
+            "id": "AuroraServerlessUserServiceLambdaRole",
+            "path": "AuroraServerlessStack/AuroraServerlessUserServiceLambdaRole",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuroraServerlessStack/AuroraServerlessUserServiceLambdaRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "managedPolicyArns": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/SecretsManagerReadWrite"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/AmazonRDSDataFullAccess"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                          ]
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.28.0"
+            }
+          },
+          "ServiceHandler": {
+            "id": "ServiceHandler",
+            "path": "AuroraServerlessStack/ServiceHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "AuroraServerlessStack/ServiceHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "AuroraServerlessStack/ServiceHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "AuroraServerlessStack/ServiceHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.28.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "AuroraServerlessStack/ServiceHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "21a4ca1be7e9d544023edc57c4145b733237277ab715bf07af896b8a21128275.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "AuroraServerlessUserServiceLambdaRole155C8FD0",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "TABLE": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              ":rds:",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              ":",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              ":cluster:",
+                              {
+                                "Ref": "ServerlessCluster1833F7CA"
+                              }
+                            ]
+                          ]
+                        },
+                        "TABLESECRET": {
+                          "Ref": "ServerlessClusterSecretAttachment14B483D3"
+                        },
+                        "DATABASE": "userservice"
+                      }
+                    },
+                    "handler": "user.handler",
+                    "runtime": "nodejs16.x"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.28.0"
+            }
+          },
+          "services-api": {
+            "id": "services-api",
+            "path": "AuroraServerlessStack/services-api",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuroraServerlessStack/services-api/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "This service serves.",
+                    "name": "Member Service"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                  "version": "2.28.0"
+                }
+              },
+              "CloudWatchRole": {
+                "id": "CloudWatchRole",
+                "path": "AuroraServerlessStack/services-api/CloudWatchRole",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuroraServerlessStack/services-api/CloudWatchRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.28.0"
+                }
+              },
+              "Account": {
+                "id": "Account",
+                "path": "AuroraServerlessStack/services-api/Account",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Account",
+                  "aws:cdk:cloudformation:props": {
+                    "cloudWatchRoleArn": {
+                      "Fn::GetAtt": [
+                        "servicesapiCloudWatchRole019FA933",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAccount",
+                  "version": "2.28.0"
+                }
+              },
+              "Deployment": {
+                "id": "Deployment",
+                "path": "AuroraServerlessStack/services-api/Deployment",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuroraServerlessStack/services-api/Deployment/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                      "aws:cdk:cloudformation:props": {
+                        "restApiId": {
+                          "Ref": "servicesapi290F54E8"
+                        },
+                        "description": "Automatically created by the RestApi construct"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+                  "version": "2.28.0"
+                }
+              },
+              "DeploymentStage.v1": {
+                "id": "DeploymentStage.v1",
+                "path": "AuroraServerlessStack/services-api/DeploymentStage.v1",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuroraServerlessStack/services-api/DeploymentStage.v1/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                      "aws:cdk:cloudformation:props": {
+                        "restApiId": {
+                          "Ref": "servicesapi290F54E8"
+                        },
+                        "deploymentId": {
+                          "Ref": "servicesapiDeployment61F2A5B7b07b0a8436275ca9279985355562220c"
+                        },
+                        "stageName": "v1"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+                  "version": "2.28.0"
+                }
+              },
+              "Endpoint": {
+                "id": "Endpoint",
+                "path": "AuroraServerlessStack/services-api/Endpoint",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.28.0"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "AuroraServerlessStack/services-api/Default",
+                "children": {
+                  "OPTIONS": {
+                    "id": "OPTIONS",
+                    "path": "AuroraServerlessStack/services-api/Default/OPTIONS",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "AuroraServerlessStack/services-api/Default/OPTIONS/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "httpMethod": "OPTIONS",
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "servicesapi290F54E8",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "servicesapi290F54E8"
+                            },
+                            "authorizationType": "NONE",
+                            "integration": {
+                              "type": "MOCK",
+                              "requestTemplates": {
+                                "application/json": "{ statusCode: 200 }"
+                              },
+                              "integrationResponses": [
+                                {
+                                  "statusCode": "204",
+                                  "responseParameters": {
+                                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+                                    "method.response.header.Access-Control-Allow-Origin": "'http://localhost:3000'",
+                                    "method.response.header.Vary": "'Origin'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+                                    "method.response.header.Access-Control-Allow-Credentials": "'true'"
+                                  }
+                                }
+                              ]
+                            },
+                            "methodResponses": [
+                              {
+                                "statusCode": "204",
+                                "responseParameters": {
+                                  "method.response.header.Access-Control-Allow-Headers": true,
+                                  "method.response.header.Access-Control-Allow-Origin": true,
+                                  "method.response.header.Vary": true,
+                                  "method.response.header.Access-Control-Allow-Methods": true,
+                                  "method.response.header.Access-Control-Allow-Credentials": true
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "GET": {
+                    "id": "GET",
+                    "path": "AuroraServerlessStack/services-api/Default/GET",
+                    "children": {
+                      "ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..": {
+                        "id": "ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..",
+                        "path": "AuroraServerlessStack/services-api/Default/GET/ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                          "aws:cdk:cloudformation:props": {
+                            "action": "lambda:InvokeFunction",
+                            "functionName": {
+                              "Fn::GetAtt": [
+                                "ServiceHandlerF07C7D00",
+                                "Arn"
+                              ]
+                            },
+                            "principal": "apigateway.amazonaws.com",
+                            "sourceArn": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "arn:",
+                                  {
+                                    "Ref": "AWS::Partition"
+                                  },
+                                  ":execute-api:",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  ":",
+                                  {
+                                    "Ref": "AWS::AccountId"
+                                  },
+                                  ":",
+                                  {
+                                    "Ref": "servicesapi290F54E8"
+                                  },
+                                  "/",
+                                  {
+                                    "Ref": "servicesapiDeploymentStagev1CA073328"
+                                  },
+                                  "/GET/"
+                                ]
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..": {
+                        "id": "ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..",
+                        "path": "AuroraServerlessStack/services-api/Default/GET/ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                          "aws:cdk:cloudformation:props": {
+                            "action": "lambda:InvokeFunction",
+                            "functionName": {
+                              "Fn::GetAtt": [
+                                "ServiceHandlerF07C7D00",
+                                "Arn"
+                              ]
+                            },
+                            "principal": "apigateway.amazonaws.com",
+                            "sourceArn": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "arn:",
+                                  {
+                                    "Ref": "AWS::Partition"
+                                  },
+                                  ":execute-api:",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  ":",
+                                  {
+                                    "Ref": "AWS::AccountId"
+                                  },
+                                  ":",
+                                  {
+                                    "Ref": "servicesapi290F54E8"
+                                  },
+                                  "/test-invoke-stage/GET/"
+                                ]
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "AuroraServerlessStack/services-api/Default/GET/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "httpMethod": "GET",
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "servicesapi290F54E8",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "servicesapi290F54E8"
+                            },
+                            "authorizationType": "NONE",
+                            "integration": {
+                              "type": "AWS_PROXY",
+                              "uri": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":apigateway:",
+                                    {
+                                      "Ref": "AWS::Region"
+                                    },
+                                    ":lambda:path/2015-03-31/functions/",
+                                    {
+                                      "Fn::GetAtt": [
+                                        "ServiceHandlerF07C7D00",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "/invocations"
+                                  ]
+                                ]
+                              },
+                              "integrationHttpMethod": "POST",
+                              "requestTemplates": {
+                                "application/json": "{ \"statusCode\": 200 }"
+                              }
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.28.0"
+                    }
+                  },
+                  "members": {
+                    "id": "members",
+                    "path": "AuroraServerlessStack/services-api/Default/members",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "AuroraServerlessStack/services-api/Default/members/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "servicesapi290F54E8",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": "members",
+                            "restApiId": {
+                              "Ref": "servicesapi290F54E8"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "AuroraServerlessStack/services-api/Default/members/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "AuroraServerlessStack/services-api/Default/members/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "httpMethod": "OPTIONS",
+                                "resourceId": {
+                                  "Ref": "servicesapimembers2454B694"
+                                },
+                                "restApiId": {
+                                  "Ref": "servicesapi290F54E8"
+                                },
+                                "authorizationType": "NONE",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'http://localhost:3000'",
+                                        "method.response.header.Vary": "'Origin'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+                                        "method.response.header.Access-Control-Allow-Credentials": "'true'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Vary": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true,
+                                      "method.response.header.Access-Control-Allow-Credentials": true
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "POST": {
+                        "id": "POST",
+                        "path": "AuroraServerlessStack/services-api/Default/members/POST",
+                        "children": {
+                          "ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.POST..members": {
+                            "id": "ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.POST..members",
+                            "path": "AuroraServerlessStack/services-api/Default/members/POST/ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.POST..members",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "ServiceHandlerF07C7D00",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "servicesapi290F54E8"
+                                      },
+                                      "/",
+                                      {
+                                        "Ref": "servicesapiDeploymentStagev1CA073328"
+                                      },
+                                      "/POST/members"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.POST..members": {
+                            "id": "ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.POST..members",
+                            "path": "AuroraServerlessStack/services-api/Default/members/POST/ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.POST..members",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "ServiceHandlerF07C7D00",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "servicesapi290F54E8"
+                                      },
+                                      "/test-invoke-stage/POST/members"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "AuroraServerlessStack/services-api/Default/members/POST/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "httpMethod": "POST",
+                                "resourceId": {
+                                  "Ref": "servicesapimembers2454B694"
+                                },
+                                "restApiId": {
+                                  "Ref": "servicesapi290F54E8"
+                                },
+                                "authorizationType": "COGNITO_USER_POOLS",
+                                "authorizerId": {
+                                  "Ref": "kakaoAuthorizer46CE5419"
+                                },
+                                "integration": {
+                                  "type": "AWS_PROXY",
+                                  "uri": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
+                                        {
+                                          "Fn::GetAtt": [
+                                            "ServiceHandlerF07C7D00",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/invocations"
+                                      ]
+                                    ]
+                                  },
+                                  "integrationHttpMethod": "POST"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.28.0"
+                        }
+                      },
+                      "{id}": {
+                        "id": "{id}",
+                        "path": "AuroraServerlessStack/services-api/Default/members/{id}",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "AuroraServerlessStack/services-api/Default/members/{id}/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "servicesapimembers2454B694"
+                                },
+                                "pathPart": "{id}",
+                                "restApiId": {
+                                  "Ref": "servicesapi290F54E8"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "AuroraServerlessStack/services-api/Default/members/{id}/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "AuroraServerlessStack/services-api/Default/members/{id}/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "httpMethod": "OPTIONS",
+                                    "resourceId": {
+                                      "Ref": "servicesapimembersid22EC6350"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "servicesapi290F54E8"
+                                    },
+                                    "authorizationType": "NONE",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'http://localhost:3000'",
+                                            "method.response.header.Vary": "'Origin'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST,PUT,PATCH,DELETE'",
+                                            "method.response.header.Access-Control-Allow-Credentials": "'true'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Vary": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true,
+                                          "method.response.header.Access-Control-Allow-Credentials": true
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.28.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.28.0"
+                            }
+                          },
+                          "GET": {
+                            "id": "GET",
+                            "path": "AuroraServerlessStack/services-api/Default/members/{id}/GET",
+                            "children": {
+                              "ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}": {
+                                "id": "ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}",
+                                "path": "AuroraServerlessStack/services-api/Default/members/{id}/GET/ApiPermission.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "ServiceHandlerF07C7D00",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "servicesapi290F54E8"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "servicesapiDeploymentStagev1CA073328"
+                                          },
+                                          "/GET/members/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.28.0"
+                                }
+                              },
+                              "ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}": {
+                                "id": "ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}",
+                                "path": "AuroraServerlessStack/services-api/Default/members/{id}/GET/ApiPermission.Test.AuroraServerlessStackservicesapiBB5DBEFC.GET..members.{id}",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "ServiceHandlerF07C7D00",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "servicesapi290F54E8"
+                                          },
+                                          "/test-invoke-stage/GET/members/*"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.28.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "AuroraServerlessStack/services-api/Default/members/{id}/GET/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "httpMethod": "GET",
+                                    "resourceId": {
+                                      "Ref": "servicesapimembersid22EC6350"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "servicesapi290F54E8"
+                                    },
+                                    "authorizationType": "COGNITO_USER_POOLS",
+                                    "authorizerId": {
+                                      "Ref": "kakaoAuthorizer46CE5419"
+                                    },
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::GetAtt": [
+                                                "ServiceHandlerF07C7D00",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.28.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.28.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.28.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                      "version": "2.28.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+              "version": "2.28.0"
+            }
+          },
+          "apiUrl": {
+            "id": "apiUrl",
+            "path": "AuroraServerlessStack/apiUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.28.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "AuroraServerlessStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "AuroraServerlessStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.28.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "AuroraServerlessStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.28.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.42"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.28.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.28.0"
+    }
+  }
+}

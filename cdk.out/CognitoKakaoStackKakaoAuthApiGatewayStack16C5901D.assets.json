@@ -1,0 +1,19 @@
+{
+  "version": "20.0.0",
+  "files": {
+    "6fbaa0c880a3fb3c53d761ceb9741a7e1122fedaa7e38d4bab8da862d830714e": {
+      "source": {
+        "path": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "6fbaa0c880a3fb3c53d761ceb9741a7e1122fedaa7e38d4bab8da862d830714e.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

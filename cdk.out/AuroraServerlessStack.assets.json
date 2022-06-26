@@ -1,0 +1,32 @@
+{
+  "version": "20.0.0",
+  "files": {
+    "21a4ca1be7e9d544023edc57c4145b733237277ab715bf07af896b8a21128275": {
+      "source": {
+        "path": "asset.21a4ca1be7e9d544023edc57c4145b733237277ab715bf07af896b8a21128275",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "21a4ca1be7e9d544023edc57c4145b733237277ab715bf07af896b8a21128275.zip",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    },
+    "2a30f98ffce405c28541e7a3128e1048fdbfe61fa1347a97ea20e80eb84f22f6": {
+      "source": {
+        "path": "AuroraServerlessStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "2a30f98ffce405c28541e7a3128e1048fdbfe61fa1347a97ea20e80eb84f22f6.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

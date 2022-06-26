@@ -1,0 +1,358 @@
+{
+ "Resources": {
+  "HttpApi1AA332FB": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "CorsConfiguration": {
+     "AllowHeaders": [
+      "*"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ],
+     "MaxAge": 864000
+    },
+    "Name": "KakaoAuthHttpApi",
+    "ProtocolType": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/HttpApi/Resource"
+   }
+  },
+  "HttpApiDefaultStageABD8D0D7": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApi1AA332FB"
+    },
+    "StageName": "$default",
+    "AutoDeploy": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/HttpApi/DefaultStage/Resource"
+   }
+  },
+  "HttpApiJWTAuthorizer22DB345D": {
+   "Type": "AWS::ApiGatewayV2::Authorizer",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApi1AA332FB"
+    },
+    "AuthorizerType": "JWT",
+    "Name": "KakaoAuthJWTAuthorizer",
+    "IdentitySource": [
+     "$request.header.Authorization"
+    ],
+    "JwtConfiguration": {
+     "Audience": [
+      {
+       "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPoolClient2F5918F753847A55"
+      }
+     ],
+     "Issuer": {
+      "Fn::Join": [
+       "",
+       [
+        "https://cognito-idp.",
+        {
+         "Ref": "AWS::Region"
+        },
+        ".amazonaws.com/",
+        {
+         "Fn::ImportValue": "CognitoKakaoStack:ExportsOutputRefUserPool6BA7E5F296FD7236"
+        }
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/HttpApi/JWTAuthorizer/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02Nyw6CMBBFv4V9OzwSjUsJG3cm+AGmQoUBbRuYQrTh36VAIqtzc3KTk0ByAhcFYux5Ubb8hQ9wNxJFy2Z1FwYrQXIUnyEBlz1VapDNmB+V9CO1VOsOv7KbWC57bbti8VdLxpJfe5tpVSKhVhOLuHiZWkAUnLd26LkPbg93ITK+67mGF/MvT0zpUkLTh0N8hPgAcdD0iLyzivAtIV/5A6SIfB7sAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "CognitoKakaoStack/KakaoAuthApiGatewayStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "HttpApiUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "HttpApi1AA332FB"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "KakaoAuthHttpApiUrl"
+   }
+  },
+  "ExportsOutputRefHttpApi1AA332FB290D59B1": {
+   "Value": {
+    "Ref": "HttpApi1AA332FB"
+   },
+   "Export": {
+    "Name": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApi1AA332FB290D59B1"
+   }
+  },
+  "ExportsOutputRefHttpApiJWTAuthorizer22DB345D61AD66AB": {
+   "Value": {
+    "Ref": "HttpApiJWTAuthorizer22DB345D"
+   },
+   "Export": {
+    "Name": "CognitoKakaoStackKakaoAuthApiGatewayStack16C5901D:ExportsOutputRefHttpApiJWTAuthorizer22DB345D61AD66AB"
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
