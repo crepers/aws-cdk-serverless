@@ -1,6 +1,6 @@
 export namespace App {
   export const Context = {
-    ns: 'KakaoAuth',
+    ns: 'dev',
     region: 'ap-northeast-2',
   }
 }
