@@ -1,15 +1,16 @@
 import { Duration, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { ApiGatewayStack } from './kakao/apigateway-stack'
-import { AuthKakaoStack } from './kakao/auth-kakao-stack'
-import { App, IdentityProvider } from '../config/config'
+import { ApiGatewayStack } from '../kakao/apigateway-stack'
+import { AuthKakaoStack } from '../kakao/auth-kakao-stack'
+import { App, IdentityProvider } from '../../config/config'
 // import { CognitoUserPool } from './kakao/cognito';
 
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as path from 'path';
-import { AuthStack } from './kakao/auth-stack';
+import { AuthStack } from '../kakao/auth-stack';
+import { AppContext } from '../../lib/base/app-context';
 
 interface ITriggerFunctions {
   preSignup?: lambda.IFunction
@@ -22,8 +23,8 @@ export class CognitoKakaoStack extends Stack {
   public readonly userPool: cognito.IUserPool
   public readonly userPoolClient: cognito.IUserPoolClient
   
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+  constructor(appContext: AppContext, id: string, props?: StackProps) {
+    super(appContext.cdkApp, id, props);
     
     const { ns } = App.Context;
     
@@ -69,7 +70,7 @@ export class CognitoKakaoStack extends Stack {
   private createTriggerFunctions(): ITriggerFunctions {
     const preSignup = new NodejsFunction(this, `PreSignupFunction`, {
       functionName: `${App.Context.ns}PreSignupTrigger`,
-      entry: path.resolve(__dirname, 'kakao', 'functions', 'pre-signup.ts'),
+      entry: path.resolve(__dirname, '..', 'kakao', 'functions', 'pre-signup.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
       timeout: Duration.seconds(5),
@@ -78,7 +79,7 @@ export class CognitoKakaoStack extends Stack {
 
     const postConfirmation = new NodejsFunction(this, `PostConfirmationFunction`, {
       functionName: `${App.Context.ns}PostConfirmTrigger`,
-      entry: path.resolve(__dirname, 'kakao', 'functions', 'post-confirmation.ts'),
+      entry: path.resolve(__dirname, '..', 'kakao', 'functions', 'post-confirmation.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
       timeout: Duration.seconds(5),
@@ -86,7 +87,7 @@ export class CognitoKakaoStack extends Stack {
     })
     const preAuthentication = new NodejsFunction(this, `PreAuthenticationFunction`, {
       functionName: `${App.Context.ns}PreAuthenticationTrigger`,
-      entry: path.resolve(__dirname, 'kakao', 'functions', 'pre-authentication.ts'),
+      entry: path.resolve(__dirname, '..', 'kakao', 'functions', 'pre-authentication.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
       timeout: Duration.seconds(5),

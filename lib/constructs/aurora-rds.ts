@@ -72,7 +72,7 @@ export interface AuroraProps {
    * @type {string}
    * @memberof AuroraProps
    */
-  auroraClusterUsername?: string;
+  auroraClusterUsername: string;
 
   /**
    *
@@ -131,8 +131,8 @@ export interface AuroraProps {
   description?:string;
 }
 
-export class AuroraRdsConstruct extends Construct {
-//export class Aurora extends Construct {
+export class AuroraConstruct extends Construct {
+  public readonly aurora_cluster : rds.DatabaseCluster
   constructor(scope: Construct, id: string, props:AuroraProps) {
     super(scope, id);
 
@@ -238,15 +238,15 @@ export class AuroraRdsConstruct extends Construct {
     }
 
     // aurora params
-    const auroraParameterGroup = new rds.ParameterGroup(
-      this,
-      'AuroraParameterGroup',
-      {
-        engine: auroraEngine,
-        description: id + ' Parameter Group',
-        parameters: auroraParameters,
-      },
-    );
+    // const auroraParameterGroup = new rds.ParameterGroup(
+    //   this,
+    //   'AuroraParameterGroup',
+    //   {
+    //     engine: auroraEngine,
+    //     description: id + ' Parameter Group',
+    //     parameters: auroraParameters,
+    //   },
+    // );
 
     const auroraClusterSecret = new secretsmanager.Secret(
       this,
@@ -258,7 +258,10 @@ export class AuroraRdsConstruct extends Construct {
           excludeCharacters: "\"@/\\ '",
           generateStringKey: 'password',
           passwordLength: 30,
-          secretStringTemplate: `{"username":${props.auroraClusterUsername}}`,
+          secretStringTemplate: JSON.stringify({
+            username: `${props.auroraClusterUsername}`,
+          }),
+          // `{"username":${props.auroraClusterUsername}}`,
         },
       },
     );
@@ -287,14 +290,14 @@ export class AuroraRdsConstruct extends Construct {
       cloudwatchLogsExports = ['slowquery'];
     }
 
-    const aurora_cluster = new rds.DatabaseCluster(this, 'AuroraDatabase', {
+    this.aurora_cluster = new rds.DatabaseCluster(this, 'AuroraDatabase', {
       engine: auroraEngine,
       credentials: auroraClusterCrendentials,
       backup: {
         preferredWindow: props.backupWindow,
         retention: Duration.days(props.backupRetentionDays!),
       },
-      parameterGroup: auroraParameterGroup,
+      // parameterGroup: auroraParameterGroup,
       instances: props.replicaInstances,
       iamAuthentication: true,
       storageEncrypted: true,
@@ -314,13 +317,13 @@ export class AuroraRdsConstruct extends Construct {
       },
     });
 
-    aurora_cluster.applyRemovalPolicy(RemovalPolicy.RETAIN);
+    this.aurora_cluster.applyRemovalPolicy(RemovalPolicy.RETAIN);
 
-    Tags.of(aurora_cluster).add('Name', props.dbName!, {
+    Tags.of(this.aurora_cluster).add('Name', props.dbName!, {
       priority: 300,
     });
 
-    aurora_cluster.addRotationSingleUser({
+    this.aurora_cluster.addRotationSingleUser({
       automaticallyAfter: Duration.days(30),
       excludeCharacters: "\"@/\\ '",
       vpcSubnets: vpcSubnets,
@@ -334,23 +337,23 @@ export class AuroraRdsConstruct extends Construct {
       dashboardName: props.dbName,
     });
 
-    let dbConnections = aurora_cluster.metricDatabaseConnections();
-    let cpuUtilization = aurora_cluster.metricCPUUtilization();
-    let deadlocks = aurora_cluster.metricDeadlocks();
-    let freeLocalStorage = aurora_cluster.metricFreeLocalStorage();
-    let freeableMemory = aurora_cluster.metricFreeableMemory();
-    let networkRecieveThroughput = aurora_cluster.metricNetworkReceiveThroughput();
-    let networkThroughput = aurora_cluster.metricNetworkThroughput();
-    let networkTransmitThroughput = aurora_cluster.metricNetworkTransmitThroughput();
-    let snapshotStorageUsed = aurora_cluster.metricSnapshotStorageUsed();
-    let totalBackupStorageBilled = aurora_cluster.metricTotalBackupStorageBilled();
-    let volumeBytesUsed = aurora_cluster.metricVolumeBytesUsed();
-    let volumeReadIoPs = aurora_cluster.metricVolumeReadIOPs();
-    let volumeWriteIoPs = aurora_cluster.metricVolumeWriteIOPs();
+    let dbConnections = this.aurora_cluster.metricDatabaseConnections();
+    let cpuUtilization = this.aurora_cluster.metricCPUUtilization();
+    let deadlocks = this.aurora_cluster.metricDeadlocks();
+    let freeLocalStorage = this.aurora_cluster.metricFreeLocalStorage();
+    let freeableMemory = this.aurora_cluster.metricFreeableMemory();
+    let networkRecieveThroughput = this.aurora_cluster.metricNetworkReceiveThroughput();
+    let networkThroughput = this.aurora_cluster.metricNetworkThroughput();
+    let networkTransmitThroughput = this.aurora_cluster.metricNetworkTransmitThroughput();
+    let snapshotStorageUsed = this.aurora_cluster.metricSnapshotStorageUsed();
+    let totalBackupStorageBilled = this.aurora_cluster.metricTotalBackupStorageBilled();
+    let volumeBytesUsed = this.aurora_cluster.metricVolumeBytesUsed();
+    let volumeReadIoPs = this.aurora_cluster.metricVolumeReadIOPs();
+    let volumeWriteIoPs = this.aurora_cluster.metricVolumeWriteIOPs();
 
 
     //  The average amount of time taken per disk I/O operation (average over 1 minute)
-    const readLatency = aurora_cluster.metric('ReadLatency', {
+    const readLatency = this.aurora_cluster.metric('ReadLatency', {
       statistic: 'Average',
       period: Duration.seconds(60),
     });
@@ -373,16 +376,16 @@ export class AuroraRdsConstruct extends Construct {
       left: [readLatency],
     });
 
-    freeLocalStorage = aurora_cluster.metricFreeLocalStorage();
-    freeableMemory = aurora_cluster.metricFreeableMemory();
-    networkRecieveThroughput = aurora_cluster.metricNetworkReceiveThroughput();
-    networkThroughput = aurora_cluster.metricNetworkThroughput();
-    networkTransmitThroughput = aurora_cluster.metricNetworkTransmitThroughput();
-    snapshotStorageUsed = aurora_cluster.metricSnapshotStorageUsed();
-    totalBackupStorageBilled = aurora_cluster.metricTotalBackupStorageBilled();
-    volumeBytesUsed = aurora_cluster.metricVolumeBytesUsed();
-    volumeReadIoPs = aurora_cluster.metricVolumeReadIOPs();
-    volumeWriteIoPs = aurora_cluster.metricVolumeWriteIOPs();
+    freeLocalStorage = this.aurora_cluster.metricFreeLocalStorage();
+    freeableMemory = this.aurora_cluster.metricFreeableMemory();
+    networkRecieveThroughput = this.aurora_cluster.metricNetworkReceiveThroughput();
+    networkThroughput = this.aurora_cluster.metricNetworkThroughput();
+    networkTransmitThroughput = this.aurora_cluster.metricNetworkTransmitThroughput();
+    snapshotStorageUsed = this.aurora_cluster.metricSnapshotStorageUsed();
+    totalBackupStorageBilled = this.aurora_cluster.metricTotalBackupStorageBilled();
+    volumeBytesUsed = this.aurora_cluster.metricVolumeBytesUsed();
+    volumeReadIoPs = this.aurora_cluster.metricVolumeReadIOPs();
+    volumeWriteIoPs = this.aurora_cluster.metricVolumeWriteIOPs();
 
     const widgetDeadlocks = new cloudwatch.GraphWidget({
       title: 'Deadlocks',
@@ -441,67 +444,67 @@ export class AuroraRdsConstruct extends Construct {
     );
 
     new CfnOutput(this, 'OutputSecretName', {
-      exportName: aurora_cluster.stack.stackName+':SecretName',
-      value: aurora_cluster.secret?.secretArn!,
+      exportName: this.aurora_cluster.stack.stackName+':SecretName',
+      value: this.aurora_cluster.secret?.secretArn!,
     });
 
     new CfnOutput(this, 'OutputSecretArn', {
-      exportName: aurora_cluster.stack.stackName+':SecretArn',
-      value: aurora_cluster.secret?.secretArn!,
+      exportName: this.aurora_cluster.stack.stackName+':SecretArn',
+      value: this.aurora_cluster.secret?.secretArn!,
     });
 
 
     new CfnOutput(this, 'OutputGetSecretValue', {
-      exportName: aurora_cluster.stack.stackName+':GetSecretValue',
-      value: 'aws secretsmanager get-secret-value --secret-id '+ aurora_cluster.secret?.secretArn,
+      exportName: this.aurora_cluster.stack.stackName+':GetSecretValue',
+      value: 'aws secretsmanager get-secret-value --secret-id '+ this.aurora_cluster.secret?.secretArn,
     });
 
 
     new CfnOutput(this, 'OutputInstanceIdentifiers', {
-      exportName: aurora_cluster.stack.stackName+'InstanceIdentifiers',
-      value: aurora_cluster.instanceIdentifiers.toString(),
+      exportName: this.aurora_cluster.stack.stackName+'InstanceIdentifiers',
+      value: this.aurora_cluster.instanceIdentifiers.toString(),
     });
 
     const instance_endpoints:any = [];
 
-    for (let ie of aurora_cluster.instanceEndpoints) {
+    for (let ie of this.aurora_cluster.instanceEndpoints) {
       instance_endpoints.push(ie.hostname);
     }
     new CfnOutput(this, 'OutputEndpoints', {
-      exportName: aurora_cluster.stack.stackName+':Endpoints',
+      exportName: this.aurora_cluster.stack.stackName+':Endpoints',
       value: instance_endpoints.toString(),
     });
 
     new CfnOutput(this, 'OutputClusterEndpoint', {
-      exportName: aurora_cluster.stack.stackName+':Endpoint',
-      value: aurora_cluster.clusterEndpoint.socketAddress,
+      exportName: this.aurora_cluster.stack.stackName+':Endpoint',
+      value: this.aurora_cluster.clusterEndpoint.socketAddress,
     });
 
 
     // Outputs Cluster Engine
     new CfnOutput(this, 'OutputEngineFamily', {
-      exportName: aurora_cluster.stack.stackName+':EngineFamily',
-      value: aurora_cluster.engine?.engineFamily!,
+      exportName: this.aurora_cluster.stack.stackName+':EngineFamily',
+      value: this.aurora_cluster.engine?.engineFamily!,
     });
 
     new CfnOutput(this, 'OutputEngineType', {
-      exportName: aurora_cluster.stack.stackName+':EngineType',
-      value: aurora_cluster.engine?.engineType!,
+      exportName: this.aurora_cluster.stack.stackName+':EngineType',
+      value: this.aurora_cluster.engine?.engineType!,
     });
 
     new CfnOutput(this, 'OutputEngineFullVersion', {
-      exportName: aurora_cluster.stack.stackName+':EngineFullVersion',
-      value: aurora_cluster.engine?.engineVersion?.fullVersion!,
+      exportName: this.aurora_cluster.stack.stackName+':EngineFullVersion',
+      value: this.aurora_cluster.engine?.engineVersion?.fullVersion!,
     });
 
     new CfnOutput(this, 'OutputEngineMajorVersion', {
-      exportName: aurora_cluster.stack.stackName+':EngineMajorVersion',
-      value: aurora_cluster.engine?.engineVersion?.majorVersion!,
+      exportName: this.aurora_cluster.stack.stackName+':EngineMajorVersion',
+      value: this.aurora_cluster.engine?.engineVersion?.majorVersion!,
     });
 
     new CfnOutput(this, 'OutputParameterGroupFamily', {
-      exportName: aurora_cluster.stack.stackName+':ParameterGroupFamily',
-      value: aurora_cluster.engine?.parameterGroupFamily!,
+      exportName: this.aurora_cluster.stack.stackName+':ParameterGroupFamily',
+      value: this.aurora_cluster.engine?.parameterGroupFamily!,
     });
   }
 }

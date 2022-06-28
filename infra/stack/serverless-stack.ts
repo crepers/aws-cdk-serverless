@@ -1,36 +1,32 @@
-import { Duration, Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
-import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
-import { VpcConstruct } from './base/vpc-construct';
-import { AuroraServerlessConstruct } from './constructs/aurora-serverless';
+import * as ec2 from 'aws-cdk-lib/aws-ec2'
+import { AuroraServerlessConstruct } from '../../lib/constructs/aurora-serverless';
+import { AppContext } from '../../lib/base/app-context';
 
 interface Props extends StackProps {
-  userPool: cognito.IUserPool
-  userPoolClient: cognito.IUserPoolClient
+  userPool: cognito.IUserPool,
+  userPoolClient: cognito.IUserPoolClient,
+  vpc: ec2.IVpc,
 }
 
 export class ServerlessStack extends Stack {
-  constructor(scope: Construct, id: string, props: Props) {
-    super(scope, id, props);
+  constructor(appContext: AppContext, id: string, props: Props) {
+    super(appContext.cdkApp, id, props);
 
     // cognito
     const auth = new apigateway.CognitoUserPoolsAuthorizer(this, 'kakaoAuthorizer', {
       cognitoUserPools: [props.userPool]
     });
     
-    // VPC
-    const vpcConstruct = new VpcConstruct(this, 'rdsserverlessvpc', {
-       vpcName: 'rdsserverlessvpc' 
-    });
-    
     // Aurora Serverless
     const clusterConstruct = new AuroraServerlessConstruct(this, 'ServerlessCluster', {
       clusterName: 'ServerlessCluster',
-      vpc: vpcConstruct.vpc
+      vpc: props.vpc
     })
     
     const cluster = clusterConstruct.cluster;
@@ -50,7 +46,7 @@ export class ServerlessStack extends Stack {
     const handler = new lambda.Function(this, "ServiceHandler", {
       role: lambdaRole,
       runtime: lambda.Runtime.NODEJS_16_X, // So we can use async in widget.js
-      code: lambda.Code.fromAsset("functions/user-services"),
+      code: lambda.Code.fromAsset("app/functions/user-services"),
       handler: 'user.handler',
       environment: {
         TABLE: cluster.clusterArn,

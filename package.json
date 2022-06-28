@@ -2,7 +2,7 @@
   "name": "cdk-sample",
   "version": "0.1.0",
   "bin": {
-    "cdk-sample": "bin/cdk-sample.js"
+    "cdk-sample": "infra/app-main.js"
   },
   "scripts": {
     "build": "tsc",
