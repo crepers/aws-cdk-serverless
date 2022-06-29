@@ -1,11 +1,11 @@
 import { Construct } from 'constructs';
 import { Duration, Stack } from 'aws-cdk-lib';
 import * as apigwv2 from '@aws-cdk/aws-apigatewayv2-alpha'
-import { App } from '../../../config/config'
 
 interface Props {
   userPoolId: string
-  userPoolClientId: string
+  userPoolClientId: string,
+  ns: string,
 }
 
 export class HttpApi extends Construct {
@@ -15,13 +15,13 @@ export class HttpApi extends Construct {
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id)
 
-    this.api = this.createHttpApi()
+    this.api = this.createHttpApi(props)
     this.authorizer = this.createJWTAuthorizer(this.api, props)
   }
 
-  private createHttpApi(): apigwv2.HttpApi {
+  private createHttpApi(props: Props): apigwv2.HttpApi {
     return new apigwv2.HttpApi(this, 'HttpApi', {
-      apiName: `${App.Context.ns}HttpApi`,
+      apiName: `${props.ns}HttpApi`,
       corsPreflight: {
         allowHeaders: ['*'],
         allowMethods: [apigwv2.CorsHttpMethod.ANY],
@@ -35,7 +35,7 @@ export class HttpApi extends Construct {
     const region = Stack.of(this).region
 
     const authorizer = new apigwv2.HttpAuthorizer(this, `JWTAuthorizer`, {
-      authorizerName: `${App.Context.ns}JWTAuthorizer`,
+      authorizerName: `${props.ns}JWTAuthorizer`,
       httpApi,
       type: apigwv2.HttpAuthorizerType.JWT,
       identitySource: ['$request.header.Authorization'],

@@ -5,11 +5,11 @@ import * as iam from 'aws-cdk-lib/aws-iam'
 import * as cognito from 'aws-cdk-lib/aws-cognito'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs'
-import { App } from '../../../config/config'
 
 export interface IProps {
-  userPoolId: string
-  userPoolClientId: string
+  userPoolId: string,
+  userPoolClientId: string,
+  ns: string,
 }
 
 export class KakaoAuth extends Construct {
@@ -21,7 +21,7 @@ export class KakaoAuth extends Construct {
     super(scope, id)
 
     this.kakaoAuthFunction = this.createKakaoAuthFunction(props)
-    this.pingFunction = this.createPingFunction()
+    this.pingFunction = this.createPingFunction(props)
 
     this.userGroup = new cognito.CfnUserPoolGroup(this, `KakaoGroup`, {
       userPoolId: props.userPoolId,
@@ -30,9 +30,9 @@ export class KakaoAuth extends Construct {
     })
   }
 
-  private createPingFunction() {
+  private createPingFunction(props: IProps) {
     const fn = new lambdaNodejs.NodejsFunction(this, `PingFunction`, {
-      functionName: `${App.Context.ns}Ping`,
+      functionName: `${props.ns}Ping`,
       entry: path.resolve(__dirname, '..', 'functions', 'ping.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -44,7 +44,7 @@ export class KakaoAuth extends Construct {
 
   private createKakaoAuthFunction(props: IProps) {
     const fn = new lambdaNodejs.NodejsFunction(this, `KakaoAuthFunction`, {
-      functionName: `${App.Context.ns}KakaoAuth`,
+      functionName: `${props.ns}KakaoAuth`,
       entry: path.resolve(__dirname, '..', 'functions', 'kakao.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,

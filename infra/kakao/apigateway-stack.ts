@@ -3,11 +3,11 @@ import { Construct } from 'constructs';
 
 import * as apigwv2 from '@aws-cdk/aws-apigatewayv2-alpha'
 import { HttpApi } from './constructs/httpapi'
-import { App } from '../../config/config'
 
 interface Props extends StackProps {
   userPoolId: string
   userPoolClientId: string
+  ns: string
 }
 
 export class ApiGatewayStack extends Stack {
@@ -20,12 +20,13 @@ export class ApiGatewayStack extends Stack {
     const httpApi = new HttpApi(this, `HttpApi`, {
       userPoolId: props.userPoolId,
       userPoolClientId: props.userPoolClientId,
+      ns: props.ns,
     })
     this.api = httpApi.api
     this.authorizer = httpApi.authorizer
 
     new CfnOutput(this, `HttpApiUrl`, {
-      exportName: `${App.Context.ns}HttpApiUrl`,
+      exportName: `${props.ns}HttpApiUrl`,
       value: `${httpApi.api.url}` || 'undefined',
     })
   }

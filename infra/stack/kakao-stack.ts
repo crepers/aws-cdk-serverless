@@ -2,8 +2,6 @@ import { Duration, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ApiGatewayStack } from '../kakao/apigateway-stack'
 import { AuthKakaoStack } from '../kakao/auth-kakao-stack'
-import { App, IdentityProvider } from '../../config/config'
-// import { CognitoUserPool } from './kakao/cognito';
 
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -22,11 +20,14 @@ interface ITriggerFunctions {
 export class CognitoKakaoStack extends Stack {
   public readonly userPool: cognito.IUserPool
   public readonly userPoolClient: cognito.IUserPoolClient
+  private ns: string;
+  private redirectUri: string;
   
   constructor(appContext: AppContext, id: string, props?: StackProps) {
     super(appContext.cdkApp, id, props);
     
-    const { ns } = App.Context;
+    this.ns = appContext.appConfig.ns; //App.Context;
+    this.redirectUri = appContext.appConfig.identityProvider.redirectUri;
     
     // as-is
     // Error [ERR_PACKAGE_PATH_NOT_EXPORTED]: Package subpath './core' is not defined by "exports" in /home/ec2-user/environment/fmk-userservice-backend/node_modules/aws-cdk-lib/package.json
@@ -52,16 +53,18 @@ export class CognitoKakaoStack extends Stack {
     this.userPoolClient = this.createUserPoolClient(this.userPool);
     
 
-    const apiGatewayStack = new ApiGatewayStack(this, `${ns}ApiGatewayStack`, {
+    const apiGatewayStack = new ApiGatewayStack(this, `${this.ns}ApiGatewayStack`, {
       userPoolId: this.userPool.userPoolId,
       userPoolClientId: this.userPoolClient.userPoolClientId,
+      ns: this.ns,
     })
     
-    const authKakaoStack = new AuthKakaoStack(this, `${ns}AuthKakaoStack`, {
+    const authKakaoStack = new AuthKakaoStack(this, `${this.ns}AuthKakaoStack`, {
       api: apiGatewayStack.api,
       authorizer: apiGatewayStack.authorizer,
       userPoolId: this.userPool.userPoolId,
       userPoolClientId: this.userPoolClient.userPoolClientId,
+      ns: this.ns,
     })
     
     authKakaoStack.addDependency(apiGatewayStack);
@@ -69,7 +72,7 @@ export class CognitoKakaoStack extends Stack {
   
   private createTriggerFunctions(): ITriggerFunctions {
     const preSignup = new NodejsFunction(this, `PreSignupFunction`, {
-      functionName: `${App.Context.ns}PreSignupTrigger`,
+      functionName: `${this.ns}PreSignupTrigger`,
       entry: path.resolve(__dirname, '..', 'kakao', 'functions', 'pre-signup.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -78,7 +81,7 @@ export class CognitoKakaoStack extends Stack {
     })
 
     const postConfirmation = new NodejsFunction(this, `PostConfirmationFunction`, {
-      functionName: `${App.Context.ns}PostConfirmTrigger`,
+      functionName: `${this.ns}PostConfirmTrigger`,
       entry: path.resolve(__dirname, '..', 'kakao', 'functions', 'post-confirmation.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -86,7 +89,7 @@ export class CognitoKakaoStack extends Stack {
       memorySize: 128,
     })
     const preAuthentication = new NodejsFunction(this, `PreAuthenticationFunction`, {
-      functionName: `${App.Context.ns}PreAuthenticationTrigger`,
+      functionName: `${this.ns}PreAuthenticationTrigger`,
       entry: path.resolve(__dirname, '..', 'kakao', 'functions', 'pre-authentication.ts'),
       handler: 'handler',
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -103,7 +106,7 @@ export class CognitoKakaoStack extends Stack {
 
   private createUserPool(triggerFunctions: ITriggerFunctions) {
     const userPool = new cognito.UserPool(this, 'UserPool', {
-      userPoolName: `${App.Context.ns}UserPool`,
+      userPoolName: `${this.ns}UserPool`,
       selfSignUpEnabled: true,
       signInAliases: { email: true },
       autoVerify: { email: true },
@@ -131,7 +134,7 @@ export class CognitoKakaoStack extends Stack {
     new cognito.UserPoolDomain(this, `UserPoolDomain`, {
       userPool,
       cognitoDomain: {
-        domainPrefix: `${App.Context.ns.toLowerCase()}${Stack.of(this).account}`,
+        domainPrefix: `${this.ns.toLowerCase()}${Stack.of(this).account}`,
       },
     })
     return userPool
@@ -139,7 +142,7 @@ export class CognitoKakaoStack extends Stack {
 
   private createUserPoolClient(userPool: cognito.IUserPool): cognito.IUserPoolClient {
     const userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
-      userPoolClientName: `${App.Context.ns}UserPoolClient`,
+      userPoolClientName: `${this.ns}UserPoolClient`,
       userPool,
       authFlows: {
         adminUserPassword: true,
@@ -149,7 +152,7 @@ export class CognitoKakaoStack extends Stack {
         flows: {
           implicitCodeGrant: true,
         },
-        callbackUrls: [IdentityProvider.RedirectUri],
+        callbackUrls: [this.redirectUri],
         scopes: [
           cognito.OAuthScope.EMAIL,
           cognito.OAuthScope.PROFILE,

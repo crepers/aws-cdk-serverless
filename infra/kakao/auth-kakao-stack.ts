@@ -11,7 +11,8 @@ interface Props extends StackProps {
   api: apigwv2.IHttpApi
   authorizer?: apigwv2.IHttpRouteAuthorizer
   userPoolId: string
-  userPoolClientId: string
+  userPoolClientId: string,
+  ns: string
 }
 
 interface RouteProps {
@@ -30,6 +31,7 @@ export class AuthKakaoStack extends Stack {
     const kakaoAuth = new KakaoAuth(this, `KakaoAuth`, {
       userPoolId: props.userPoolId,
       userPoolClientId: props.userPoolClientId,
+      ns: props.ns,
     })
 
     this.addRoute({
