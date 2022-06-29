@@ -1,0 +1,8 @@
+{
+  "ns": "prd",
+  "region": "ap-northeast-2",
+  "account": "",
+  "identityProvider" : {
+    "redirectUri": "http://localhost:3000"
+  }
+}

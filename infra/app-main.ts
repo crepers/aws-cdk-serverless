@@ -6,6 +6,7 @@ import { CognitoKakaoStack } from './stack/kakao-stack';
 import { RdsStack } from './stack/rds-stack';
 import { VpcStack } from './stack/vpc-stack';
 import { AppContext } from '../lib/base/app-context';
+import { AuroraServerlessV2Stack } from '../lib/constructs/aurora-serverless-v2';
 
 const appContext = new AppContext({
   projectPrefix: 'envtest'
@@ -24,9 +25,19 @@ if(appContext.appConfig) {
   serverless.addDependency(vpcStack);
   serverless.addDependency(kakao);
   
-  const rdsAurora = new RdsStack(appContext, 'RdsAuroraStack', {
-    vpc: vpcStack.vpc
-  });
+  const auroraV2 = new AuroraServerlessV2Stack(appContext.cdkApp, 'Serverless-v2', {
+    vpc: vpcStack.vpc,
+    defaultDatabaseName: 'AuroraServerlessv2',
+    clusterName: 'v2cluster',
+    credentials:{
+      username: 'admin',
+      password: 'adminadmin'
+    }
+  })
+  
+  // const rdsAurora = new RdsStack(appContext, 'RdsAuroraStack', {
+  //   vpc: vpcStack.vpc
+  // });
 } else {
   console.warn("App config is undefined. Please check the configuration file.");
 }
