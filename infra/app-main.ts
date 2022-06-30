@@ -32,7 +32,9 @@ if(appContext.appConfig) {
     credentials:{
       username: 'admin',
       password: 'adminadmin'
-    }
+    },
+    backendServerSG: vpcStack.backendServerSG,
+    dbserverSG : vpcStack.dbserverSG,
   })
   
   // const rdsAurora = new RdsStack(appContext, 'RdsAuroraStack', {

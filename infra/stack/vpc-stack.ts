@@ -10,6 +10,8 @@ interface Props extends StackProps {
 
 export class VpcStack extends Stack {
   public readonly vpc: ec2.IVpc;
+  public readonly backendServerSG: ec2.ISecurityGroup;
+  public readonly dbserverSG : ec2.ISecurityGroup;
   
   constructor(appContext: AppContext, id: string, props: Props) {
     super(appContext.cdkApp, id, props);
@@ -19,5 +21,7 @@ export class VpcStack extends Stack {
     });
     
     this.vpc = vpcConstruct.vpc;
+    this.backendServerSG = vpcConstruct.backendServerSG;
+    this.dbserverSG = vpcConstruct.dbserverSG;
   }
 }

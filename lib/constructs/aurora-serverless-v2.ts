@@ -12,6 +12,8 @@ export interface AuroraServerlessV2Props extends StackProps{
   clusterName: string,
   defaultDatabaseName: string,
   vpc: ec2.IVpc,
+  backendServerSG: ec2.ISecurityGroup,
+  dbserverSG : ec2.ISecurityGroup,
   credentials:{
     username: string,
     password: string
@@ -58,12 +60,14 @@ export class AuroraServerlessV2Stack extends Stack {
             instanceProps: {
                 vpc: props.vpc,
                 vpcSubnets: {
-                    subnetType: ec2.SubnetType.PUBLIC,
+                    // subnetType: ec2.SubnetType.PUBLIC,
+                    subnetType: ec2.SubnetType.ISOLATED
                 },
                 instanceType: CustomInstanceType.SERVERLESS as unknown as ec2.InstanceType,
                 autoMinorVersionUpgrade: true,
                 allowMajorVersionUpgrade: false,
                 publiclyAccessible: true,
+                securityGroups: [ props.dbserverSG ],
             },
             monitoringInterval: Duration.seconds(10),
             //monitoringRole: optional, creates a new IAM role by default
@@ -79,8 +83,8 @@ export class AuroraServerlessV2Stack extends Stack {
             preferredMaintenanceWindow:  'Mon:00:15-Mon:00:45',
         });
 
-        this.cluster.connections.allowDefaultPortFromAnyIpv4('Open to the world');
-
+        // this.cluster.connections.allowDefaultPortFromAnyIpv4('Open to the world');
+        
         const serverlessV2ScalingConfiguration = {
             MinCapacity: 0.5,
             MaxCapacity: 16,
@@ -134,6 +138,13 @@ export class AuroraServerlessV2Stack extends Stack {
           parameterName: `aurora-serverless-${props.clusterName}-endpoint`,
           stringValue: this.cluster.clusterEndpoint.hostname,
         });
+        
+        // const proxy = this.cluster.addProxy('proxy', {
+        //     borrowTimeout: Duration.seconds(30),
+        //     maxConnectionsPercent: 50,
+        //     secret: databaseCredentialsSecret,
+        //     vpc: props.vpc,
+        // });
     }
 }
 // import { Construct } from 'constructs';
