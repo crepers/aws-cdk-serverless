@@ -2,6 +2,7 @@ import { Construct } from "constructs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {Credentials} from "aws-cdk-lib/aws-rds";
+import * as sm from "aws-cdk-lib/aws-secretsmanager";
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
 import { custom_resources as cr } from "aws-cdk-lib";
 import {CfnResource, SecretValue, Stack, StackProps, Duration} from "aws-cdk-lib";
@@ -36,6 +37,17 @@ export class AuroraServerlessV2Stack extends Stack {
 
         const dbClusterInstanceCount: number = 1;
 
+        const databaseCredentialsSecret = new sm.Secret(this, `${props.clusterName}-DBCredentialsSecret`, {
+          secretName: `${props.clusterName}-credentials`,
+          generateSecretString: {
+            secretStringTemplate: JSON.stringify({
+              username: `${props.credentials.username}`,
+            }),
+            excludePunctuation: true,
+            includeSpace: false,
+            generateStringKey: 'password'
+          }
+        });    
         
         this.cluster = new rds.DatabaseCluster(this, props.clusterName, { // "AuroraServerlessv2", {
             engine: rds.DatabaseClusterEngine.auroraMysql({
@@ -58,7 +70,8 @@ export class AuroraServerlessV2Stack extends Stack {
             cloudwatchLogsExports: ['error', 'general', 'slowquery', 'audit'], // Export all available MySQL-based logs
             cloudwatchLogsRetention: RetentionDays.THREE_MONTHS, // Optional - default is to never expire logs
             //todo: use secret manager
-            credentials: Credentials.fromPassword(props.credentials.username, SecretValue.unsafePlainText(props.credentials.password)),
+            // credentials: Credentials.fromPassword(props.credentials.username, SecretValue.unsafePlainText(props.credentials.password)),
+            credentials: rds.Credentials.fromSecret(databaseCredentialsSecret),
             backup: {
                 retention: Duration.days(7),
                 preferredWindow: '01:00-02:00'
