@@ -1,16 +1,19 @@
 const AWS = require('aws-sdk');
 var rdsdataservice = new AWS.RDSDataService();
 
-exports.main = async function(event, context) {
+exports.handler = async function(event, context) {
   try {
     var method = event.httpMethod;
     var recordName = event.path.startsWith('/') ? event.path.substring(event.path.lastIndexOf('/') + 1) : event.path;
 // Defining parameters for rdsdataservice
+
+    // v1
     var params = {
       resourceArn: process.env.TABLE,
       secretArn: process.env.TABLESECRET,
       database: process.env.DATABASE,
-   }
+  }
+   
    if (method === "GET") {
       if (event.path === "/") {
        //Here is where we are defining the SQL query that will be run at the DATA API

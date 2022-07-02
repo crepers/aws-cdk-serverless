@@ -4,5 +4,8 @@
   "account": "",
   "identityProvider" : {
     "redirectUri": "http://localhost:3000"
+  },
+  "lambda" : {
+    "database" : "usertable"
   }
 }

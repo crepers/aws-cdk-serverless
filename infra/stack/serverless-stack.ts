@@ -7,11 +7,15 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as ec2 from 'aws-cdk-lib/aws-ec2'
 import { AuroraServerlessConstruct } from '../../lib/constructs/aurora-serverless';
 import { AppContext } from '../../lib/base/app-context';
+import { DatabaseCluster } from 'aws-cdk-lib/aws-rds';
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 interface Props extends StackProps {
   userPool: cognito.IUserPool,
   userPoolClient: cognito.IUserPoolClient,
   vpc: ec2.IVpc,
+  backendServerSG: ec2.ISecurityGroup,
+  cluster: DatabaseCluster,
 }
 
 export class ServerlessStack extends Stack {
@@ -23,13 +27,12 @@ export class ServerlessStack extends Stack {
       cognitoUserPools: [props.userPool]
     });
     
-    // Aurora Serverless
-    const clusterConstruct = new AuroraServerlessConstruct(this, 'ServerlessCluster', {
-      clusterName: 'ServerlessCluster',
-      vpc: props.vpc
-    })
-    
-    const cluster = clusterConstruct.cluster;
+    // Aurora Serverless V1
+    // const clusterConstruct = new AuroraServerlessConstruct(this, 'ServerlessCluster', {
+    //   clusterName: 'ServerlessCluster',
+    //   vpc: props.vpc
+    // })
+    // const cluster = clusterConstruct.cluster;
     
     /**
      * Lambda
@@ -37,22 +40,43 @@ export class ServerlessStack extends Stack {
     const lambdaRole = new iam.Role(this, 'AuroraServerlessUserServiceLambdaRole', {
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
       managedPolicies: [
-            iam.ManagedPolicy.fromAwsManagedPolicyName('SecretsManagerReadWrite'),
-            iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonRDSDataFullAccess'),
-            iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')
-        ]
+        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaVPCAccessExecutionRole'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('SecretsManagerReadWrite'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonRDSDataFullAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')
+      ]
     });
     
+    // lambdaRole.addToPolicy(new PolicyStatement({
+    //   effect: iam.Effect.ALLOW,
+    //   sid: 'AllowEc2',
+    //   resources: ['*'],
+    //   actions: ['ec2:CreateNetworkInterface', 'ec2:DescribeNetworkInterfaces', 'ec2:DeleteNetworkInterface']
+    // }));
+
     const handler = new lambda.Function(this, "ServiceHandler", {
       role: lambdaRole,
-      runtime: lambda.Runtime.NODEJS_16_X, // So we can use async in widget.js
-      code: lambda.Code.fromAsset("app/functions/user-services"),
-      handler: 'user.handler',
+      runtime: lambda.Runtime.NODEJS_16_X,
+      code: lambda.Code.fromAsset("app/functions/user-services-v2"),
+      handler: 'user-v2.handler',
       environment: {
-        TABLE: cluster.clusterArn,
-        TABLESECRET: cluster.secret!.secretArn,
-        DATABASE: "userservice"
-      }
+        // v2
+        HOSTNAME: props.cluster.clusterEndpoint.hostname,
+        SECRET: props.cluster.secret ? props.cluster.secret.secretName : '',
+
+        // V1 기준
+        // TABLE: cluster.clusterArn,
+        // TABLE: 'table',
+        // TABLESECRET: cluster.secret!.secretArn,
+        // DATABASE: appContext.appConfig.lambda.database, //"userservice"
+      },
+      // place lambda in the VPC
+      vpc: props.vpc,
+      // place lambda in Private Subnets
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+      },
+      securityGroups: [props.backendServerSG],
     });
     
     /**
