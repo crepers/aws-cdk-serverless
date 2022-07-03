@@ -1,4 +1,4 @@
-import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -9,6 +9,9 @@ import { AuroraServerlessConstruct } from '../../lib/constructs/aurora-serverles
 import { AppContext } from '../../lib/base/app-context';
 import { DatabaseCluster } from 'aws-cdk-lib/aws-rds';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as path from 'path';
+
 
 interface Props extends StackProps {
   userPool: cognito.IUserPool,
@@ -53,12 +56,16 @@ export class ServerlessStack extends Stack {
     //   resources: ['*'],
     //   actions: ['ec2:CreateNetworkInterface', 'ec2:DescribeNetworkInterfaces', 'ec2:DeleteNetworkInterface']
     // }));
-
-    const handler = new lambda.Function(this, "ServiceHandler", {
+    const handler = new NodejsFunction(this, "ServiceHandler", {
       role: lambdaRole,
       runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("app/functions/user-services-v2"),
-      handler: 'user-v2.handler',
+      // code: lambda.Code.fromAsset("app/functions/user-services-v2"),
+      // entry: "/app/functions/user-services-v2",
+      entry : path.resolve(__dirname, '..', '..', 'app', 'functions', 'user-services-v2', 'user-v2.js'),
+      handler: 'handler',
+      // bundling: {
+      //   nodeModules: ['mysql'],
+      // },
       environment: {
         // v2
         HOSTNAME: props.cluster.clusterEndpoint.hostname,
@@ -77,6 +84,8 @@ export class ServerlessStack extends Stack {
         subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
       },
       securityGroups: [props.backendServerSG],
+      timeout: Duration.minutes(5),
+      memorySize: 256,
     });
     
     /**
