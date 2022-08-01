@@ -1,4 +1,4 @@
-import { Stack, StackProps, CfnOutput, Duration } from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput, Duration, Fn } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
@@ -22,6 +22,8 @@ interface Props extends StackProps {
 }
 
 export class ServerlessStack extends Stack {
+  public readonly apiGwArn : string;
+    
   constructor(appContext: AppContext, id: string, props: Props) {
     super(appContext.cdkApp, id, props);
 
@@ -144,5 +146,25 @@ export class ServerlessStack extends Stack {
     
      //  create an Output for the API URL
     new CfnOutput(this, 'apiUrl', {value: api.url});
+    
+    this.apiGwArn = this.getResourceARN(
+        "ap-northeast-2",
+        api.deploymentStage.restApi.restApiId,
+        api.deploymentStage.stageName
+      );
+  }
+
+  getResourceARN(region:string, restApiId:string, stageName:string): string{
+    let Arn:string = Fn.join("",
+        [
+            "arn:aws:apigateway:",
+            region,
+            "::/restapis/",
+            restApiId,
+            "/stages/",
+            stageName
+        ]
+    );
+    return Arn; 
   }
 }
